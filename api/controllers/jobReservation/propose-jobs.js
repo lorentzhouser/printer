@@ -66,7 +66,6 @@ module.exports = {
       // //the logic that finds relevant reservation time slots   
 
       //create object time slot {printer: 1, time: recommendedJobStart};
-  
       return { 
         recommendJobStart : recommendJobStart,
         urgentJobStart : urgentJobStart,

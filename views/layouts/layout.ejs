@@ -51,6 +51,8 @@
           
           <!-- LOGGED-IN NAVIGATION -->
           <% if(me) { %>
+          <a class="nav-item nav-link ml-2 ml-md-0 mr-2 mr-md-0" href="/empty-page">Empty Page</a>
+          <a class="nav-item nav-link ml-2 ml-md-0 mr-2 mr-md-0" href="/job-reservations">Prints</a>
           <a class="nav-item nav-link ml-2 ml-md-0 mr-2 mr-md-0" href="/contact">Help</a>
           <!-- Only in desktop nav -->
           <div class="nav-item dropdown d-none d-sm-block">
@@ -112,7 +114,7 @@
           
           <div id="DetailsDialog">
             <!-- First Slide Page -->
-            <div id="PrintOptions">gets populated in gcodeanalyzer</div>
+            <div id="PrintOptions">replaced by print object details</div>
 
             <!-- Second Slide Page -->
             <div id="Confirmation">
@@ -207,6 +209,8 @@
     <script src="/js/pages/homepage.page.js"></script>
     <script src="/js/pages/legal/privacy.page.js"></script>
     <script src="/js/pages/legal/terms.page.js"></script>
+    <script src="/js/print-object-client.js"></script>
+    <script src="/js/time-slot-object.js"></script>
     <!--SCRIPTS END-->
 
     <% /* Display an overlay if the current browser is not supported.

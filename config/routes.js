@@ -28,11 +28,13 @@ module.exports.routes = {
   'GET /login':              { action: 'entrance/view-login' },
   'GET /password/forgot':    { action: 'entrance/view-forgot-password' },
   'GET /password/new':       { action: 'entrance/view-new-password' },
+  'GET /empty-page':         { action: 'entrance/empty-page'},
 
   'GET /account':            { action: 'account/view-account-overview' },
   'GET /account/password':   { action: 'account/view-edit-password' },
   'GET /account/profile':    { action: 'account/view-edit-profile' },
   'GET /job-reservations':    { action: 'jobReservation/view-jobs' },
+  
   'GET /reservation-proposal/:duration':    { action: 'jobReservation/propose-jobs' },
 
 

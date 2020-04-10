@@ -1,7 +1,5 @@
 const Http = new XMLHttpRequest();
 
-
-
 var gcodeProcessorWorker = new Worker('js/gcodeProcessor.js');
 var gcodeLines = undefined;
 var selectedSettings = 0;
@@ -9,35 +7,14 @@ var results = Array(4);
 var resultFieldIds = [];
 var currentCalculationSetting = 0;
 
-function printTimeHumanReadable(seconds, duration = false) {
-    if (duration) { 
-      var durationDate = new Date(1970, 0, 1); // Epoch
-      durationDate.setSeconds(seconds);
-      return durationDate.getHours() + ' hrs ' + durationDate.getMinutes() + ' mins';
-    }; 
-    const currenSecondsSince1970 = Math.round((new Date()).getTime() / 1000);
-    if (seconds <= currenSecondsSince1970) {
-      return 'now';
-    }
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
-    const now = new Date()
-    const date = new Date(0);
-    date.setUTCSeconds(seconds);
-
-    var dayString = ""
-    if (date.getDate() == now.getDate()) {
-      dayString = "Today";
-    }
-    else if (date.getDate() == now.getDate() + 1) {
-      dayString = "Tomorrow";
-    }
-    else {
-      dayString = "" + monthNames[date.getMonth()] + ' ' + date.getDate();
-    }
-    return dayString + ' at ' + date.getHours() + ':' + date.getMinutes();
-}
+function textLinesFromFile(file, complete) {
+  var reader = new FileReader();
+  reader.onload = function(progressEvent){
+      var lines = this.result.split(/\s*[\r\n]+\s*/g);
+      complete(lines);
+  };
+  reader.readAsText(file);
+};
 
 gcodeProcessorWorker.onmessage = function (e) {
   if ("progress" in e.data) {
@@ -47,9 +24,7 @@ gcodeProcessorWorker.onmessage = function (e) {
     setProgressBarPercent(0);
   } else if ("result" in e.data) {
     const printEstimate = Math.floor(e.data.result['printTime']);    
-    const printEstimateString = ""+e.data.result['printTimeHumanReadable'];    
-
-    refreshGCodeNotificationView(printEstimate, ['','']);
+    currentPrintObject.setPrintTime(printEstimate);
     const url='http://localhost:1337/reservation-proposal/'+printEstimate;
     Http.open("GET", url);
     Http.send();
@@ -61,9 +36,16 @@ gcodeProcessorWorker.onmessage = function (e) {
 
 Http.onreadystatechange = (e) => {
   const response = Http.responseText;
+  //Check if response exists. Better validation is probably a good idea
+  if (response == '') {
+    return;
+  }
   const responseObj = JSON.parse(response);
-  console.log("state change for http");
-  refreshGCodeNotificationView(-1,[responseObj.recommendJobStart, responseObj.urgentJobStart]);
+  //should get a better reference to data actually changing so that refreshGCodNotificationView only happens once
+
+  currentPrintObject.setRecommendedTime(responseObj.recommendJobStart);
+  currentPrintObject.setUrgentTime(responseObj.urgentJobStart);
+  refreshGCodeNotificationView();
 }
 
 function setProgressBarPercent(percent) {

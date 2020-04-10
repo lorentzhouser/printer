@@ -1,51 +1,29 @@
-var selectedReservationTimeBeforeSubmit = -1;
-var reservationDuration = -1;
-var fileNameTitle = "";
-
-function textLinesFromFile(file, complete) {
-    var reader = new FileReader();
-    reader.onload = function(progressEvent){
-        var lines = this.result.split(/\s*[\r\n]+\s*/g);
-        complete(lines);
-    };
-    reader.readAsText(file);
-};
+var currentPrintObject;
 
 window.addEventListener("drop", function(e) {
-        e.preventDefault();
-        document.getElementsByTagName("HTML")[0].style.opacity = 1;
-        var gcodeNotification = document.getElementById("GCodeReservation");
+      e.preventDefault();
+      document.getElementsByTagName("HTML")[0].style.opacity = 1;
+      var gcodeNotification = document.getElementById("GCodeReservation");
+      currentPrintObject = new printObject(e.dataTransfer);
+      
+      gcodeNotification.classList.add("Visible");
+      textLinesFromFile(currentPrintObject.getFileData(), function (lines) {
+          console.log('!!new lines being baked!!');
+          gcodeProcessorWorker.postMessage([lines, settings]);
+      });
 
-        var lastFile = e.dataTransfer.files[0];
-        var fileName = lastFile.name;
-        fileNameTitle = fileName;
-        var nameElements = fileName.split(".");
-        var fileTypeName = nameElements[nameElements.length-1].toLowerCase();
+      document.getElementById("GCodeTitle").innerHTML = currentPrintObject.getFilename();
+      document.getElementById("LoadingBar").style.display = "block";
+      document.getElementById("GCodeTimeEstimate").style.display = "none";
 
-        if (fileTypeName == "gcode") {
-            gcodeNotification.classList.add("Visible");
-            textLinesFromFile(lastFile, function (lines) {
-                console.log('!!new lines being baked!!');
-                gcodeProcessorWorker.postMessage([lines, settings]);
-            });
-
-            document.getElementById("GCodeTitle").innerHTML = fileName;
-            document.getElementById("LoadingBar").style.display = "block";
-            document.getElementById("GCodeTimeEstimate").style.display = "none";
-
-            var cancelButton = document.getElementById("cancelButton");
-            cancelButton.addEventListener("click", function () {
-                //remove file and close
-                gcodeNotification.classList.remove("Visible");
-                document.getElementById("GCodeReservation").style.height = "70px";
-            });
-        }
-        else {
-            console.log("not gcode file");
-        }
-
+      var cancelButton = document.getElementById("cancelButton");
+      cancelButton.addEventListener("click", function () {
+          //remove file and close
+          currentPrintObject = {};
+          gcodeNotification.classList.remove("Visible");
+          document.getElementById("GCodeReservation").style.height = "70px";
+      });
 });
-
 
 window.addEventListener("dragover", function(e) {
     e.preventDefault();
@@ -53,8 +31,7 @@ window.addEventListener("dragover", function(e) {
 
 var lastTarget = null;
 
-window.addEventListener("dragenter", function(e)
-{
+window.addEventListener("dragenter", function(e) {
     lastTarget = e.target;
     document.getElementsByTagName("HTML")[0].style.opacity = 0.8;
 });
@@ -79,9 +56,9 @@ reserveBtn.addEventListener('click', (e) => {
     }
 
     var formData = new FormData()
-    formData.set('duration', reservationDuration);
-    formData.set('date',selectedReservationTimeBeforeSubmit); 
-    formData.set('description', fileNameTitle);
+    formData.set('duration', currentPrintObject.getPrintTime());
+    formData.set('date', currentPrintObject.getSelectedReservation()); 
+    formData.set('description', currentPrintObject.getFilename());
     formData.set('device', 1);
 
     let request = new XMLHttpRequest();
@@ -89,63 +66,25 @@ reserveBtn.addEventListener('click', (e) => {
     request.send(formData);
 });
 
-
-var reserveBtn = document.getElementById('back');
-reserveBtn.addEventListener('click', (e) => {
+//go back to menu options
+var backBtn = document.getElementById('back');
+backBtn.addEventListener('click', (e) => {
     document.getElementById('DetailsDialog').classList = '';
 });
 
-function refreshGCodeNotificationView(printEstimate, times) {
+function refreshGCodeNotificationView() {
     //update DOM
-    //make into more dynamic static object? make time a number variable and only dom updates with reformatted version. 
-    var options = [
-      ["Recommended",times[0]], 
-      ["Urgent",times[1]],
-      ["Other Options","Manual"]
-    ];
-
     const printOptions = document.getElementById('PrintOptions');
     printOptions.innerHTML = '';
-    for (let i = 0; i < options.length; i++) {
-      const title = options[i][0];
-      var detail;
-      if (isNaN(options[i][1])) {
-        detail = options[i][1];
-      }
-      else {
-        detail = printTimeHumanReadable(options[i][1]);
-      }
-       
-      var menuOption = document.createElement("div");
-      menuOption.classList = "MenuOption";
-      menuOption.setAttribute("title", title);
-      menuOption.setAttribute("tag", i);
-      menuOption.innerHTML = '<div class="InfoTextOption"><div class="subtitle2">' + title +'</div><div class="caption">'+detail+'</div></div><div id="arrow">></div>';
-      menuOption.addEventListener("click", function(e) {
-        const index = e.currentTarget.getAttribute('tag');
-        // srcElement.innerHTML.toLowerCase();
-        selectedReservationTimeBeforeSubmit = options[index][1];
-        moveToConfirmation(options[index]);
-      });
-      printOptions.appendChild(menuOption);
-    };
-    const privateOption = document.createElement("div");
-    privateOption.classList = 'PrivateOption';
-    privateOption.innerHTML = '<div class="PrivateOption"><input type="checkbox">  Class Related</div>';
-    printOptions.appendChild(privateOption);
-  
-    // document.getElementById('PrintOptions').appendChild(menuOption);
-    if (printEstimate != -1) {
-      document.getElementById('GCodeTimeEstimate').innerHTML = printTimeHumanReadable(printEstimate, true);
-      reservationDuration = printEstimate;
-    }
+    printOptions.appendChild(currentPrintObject.getPrintProposalDOMElement());
+    document.getElementById('GCodeTimeEstimate').innerHTML = currentPrintObject.getHumanReadableTimeEstimate();
     document.getElementById('GCodeTimeEstimate').style.display = "block";
     document.getElementById("GCodeReservation").style.height = "275px"; //+25 for margin
   }
   
-  function moveToConfirmation(chosenOption) {
+  function moveToConfirmation() {
     var schedule = document.getElementById('confirm-schedule');
-    schedule.innerHTML = printTimeHumanReadable(chosenOption[1]);
+    schedule.innerHTML = currentPrintObject.getSelectedReservation(); //make human readable
   
     var detailsDialog = document.getElementById('DetailsDialog');
     detailsDialog.classList = 'DetailsDialogSlide';
