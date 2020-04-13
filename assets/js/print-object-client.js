@@ -1,9 +1,8 @@
 class printObject {
     //all dates and times are in seconds from EPOCH
-    //previous constructor used simply filename
     //possibly the print object should make calls and post time estimate request?
 
-    constructor(dataTransfer, printTime = -1, startTime = -1) {
+    constructor(dataTransfer, duration = -1, startTime = -1) {
       var lastFile = dataTransfer.files[0];
       const filename = lastFile.name;
       if (!this.hasGCodeExtension(filename)) {
@@ -12,13 +11,16 @@ class printObject {
       }
       this.fileData = lastFile;
       this.filename = filename;
-      this.printTime = printTime;
+      this.duration = duration;
       this.startTime = startTime;
       printObject.selectedReservation  = -1;
     }
 
     setFilename(filename) { this.filename = filename; }
-    setPrintTime(printTime) { this.printTime = printTime; }
+    setDuration(duration) { 
+      console.log('set value for duration')
+      this.duration = duration; 
+    }
     setStartTime(startTime) { this.startTime = startTime; }
     //update to recommended time-slot-object when printer details incorporated
     setRecommendedTime(seconds) { this.recommendedTime = seconds; }
@@ -32,8 +34,10 @@ class printObject {
       return nameElements[0];
     }
 
-    getPrintTime() { return printTime; }
-    getStartTime() { return startTime; }
+    getDuration() { return this.duration; }
+    getStartTime() { return this.startTime; }
+    getRecommendedTime() { return this.recommendedTime; }
+    getUrgentTime() { return this.urgentTime; }
     getHumanReadableRecommendedTime() { return printObject.getGenericHumanReadableDate(this.recommendedTime); }
     getHumanReadableUrgentTime() { return printObject.getGenericHumanReadableDate(this.urgentTime); }
     getSelectedReservation() {
@@ -46,6 +50,17 @@ class printObject {
           return this.getHumanReadableUrgentTime();
         default:
           return "url for manual entry?";
+      }
+    }
+
+    getSelectedReservationValue() {
+      switch(Number(printObject.selectedReservation)) {
+        case 0:
+          return this.getRecommendedTime();
+        case 1:
+          return this.getUrgentTime();
+        default:
+          return -1;
       }
     }
 
@@ -85,9 +100,9 @@ class printObject {
 
     //HUMAN READABLE FUNCTIONS
     getHumanReadableTimeEstimate() {
-      if (this.printTime == -1) { return "undefined"; }
+      if (this.duration == -1) { return "undefined"; }
       var durationDate = new Date(1970, 0, 1); // Epoch
-      durationDate.setSeconds(this.printTime);
+      durationDate.setSeconds(this.duration);
       return durationDate.getHours() + ' hrs ' + durationDate.getMinutes() + ' mins';
     }
 
@@ -121,5 +136,25 @@ class printObject {
         dayString = "" + monthNames[date.getMonth()] + ' ' + date.getDate();
       }
       return dayString + ' at ' + date.getHours() + ':' + date.getMinutes();
+    }
+
+    confirmReservation() {
+      const postURL = '/api/v1/reserve-job';
+
+      if ((this.getDuration() == -1) || (this.getSelectedReservationValue() == -1)) {
+          console.log("one date variable has not been initialized");
+          return;
+      }
+
+      var formData = new FormData()
+      formData.set('duration', this.getDuration());
+      formData.set('date', this.getSelectedReservationValue()); 
+      formData.set('description', this.getFilename());
+      formData.set('device', 1);
+
+      //must address cross-site post issue (for refresh of site)?
+      let request = new XMLHttpRequest();
+      request.open("POST", postURL);
+      request.send(formData);
     }
 }

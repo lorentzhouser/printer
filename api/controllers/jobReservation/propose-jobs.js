@@ -26,7 +26,6 @@ module.exports = {
       }
       const dateNow = new Date();
       const dateNowSeconds = Math.floor(dateNow.getTime() / 1000);
-      console.log('date now seconds: ' + dateNowSeconds);
       const reservationDuration = this.req.params.duration;
       //duration in seconds
       const jobs = await PrintJob.find().sort('date ASC');
@@ -36,11 +35,10 @@ module.exports = {
       var recommendJobStart = lastJobInOrder.duration + lastJobInOrder.date;
 
       var urgentJobStart = -1;
-      for (var i = 0; i < jobs.length-1; i++) {
+      for (var i = 0; i < jobs.length; i++) {
         if (i==0) {
-          if (reservationDuration < jobs[0].date) {
-            console.log('first if');
-            urgentJobStart = 0;
+          if ((Number(reservationDuration) + Number(dateNowSeconds)) < jobs[0].date) {
+            urgentJobStart = dateNowSeconds;
             break;
           }
         }
@@ -61,8 +59,6 @@ module.exports = {
         console.log('last if');
         urgentJobStart = recommendJobStart;
       }
-      console.log('outside the ifs. should work');
-    
       // //the logic that finds relevant reservation time slots   
 
       //create object time slot {printer: 1, time: recommendedJobStart};
