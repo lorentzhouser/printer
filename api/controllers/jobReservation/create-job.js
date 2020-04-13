@@ -43,7 +43,14 @@ module.exports = {
         type: 'string',
         required: true,
         description: 'specific printer or laser'
+      },
+
+      class: {
+        type: 'boolean',
+        required: false,
+        description: 'is this file class related?'
       }
+
     },
   
   

@@ -9,6 +9,7 @@ class printObject {
         //alert user that filename cannot have non-delimiting periods and must be .gcode file
         throw "invalid file type";
       }
+      this.classRelated = false;
       this.fileData = lastFile;
       this.filename = filename;
       this.duration = duration;
@@ -17,23 +18,20 @@ class printObject {
     }
 
     setFilename(filename) { this.filename = filename; }
-    setDuration(duration) { 
-      console.log('set value for duration')
-      this.duration = duration; 
-    }
+    setDuration(duration) { this.duration = duration; }
     setStartTime(startTime) { this.startTime = startTime; }
     //update to recommended time-slot-object when printer details incorporated
     setRecommendedTime(seconds) { this.recommendedTime = seconds; }
     setUrgentTime(seconds) { this.urgentTime = seconds; }
-
+    setClassRelatedStatus(status) { this.classRelated = status; }
     static setSelectedReservation(index) { printObject.selectedReservation = index; }
+
     getFileData() { return this.fileData; }
     getFilename() { return this.filename; }
     getCleanFilename() {
       const nameElements = filename.split(".");
       return nameElements[0];
     }
-
     getDuration() { return this.duration; }
     getStartTime() { return this.startTime; }
     getRecommendedTime() { return this.recommendedTime; }
@@ -86,9 +84,22 @@ class printObject {
       const privateOption = document.createElement("div");
       privateOption.classList = 'PrivateOption';
       privateOption.innerHTML = '<div class="PrivateOption"><input type="checkbox">  Class Related</div>';
+      var self = this;
+      privateOption.children[0].children[0].addEventListener('change', function(e) {
+        self.setClassRelatedStatus(this.checked);
+        if (this.checked) {
+          console.log('checked');
+        }
+        else {
+          console.log('unchecked');
+        }
+      });
+      
       printOptions.appendChild(privateOption);
       return printOptions;      
     }
+
+    getClassRelatedStatus() { return this.classRelated; }
 
     hasGCodeExtension(filename) {
       //boolean function that parses the extension from filename to check for correct filetype
@@ -109,7 +120,7 @@ class printObject {
     getHumanReadableDate() {
       return(printObject.getGenericHumanReadableDate(this.startTime));
     }
-
+    
     static getGenericHumanReadableDate(seconds) {
       const pastSecondsMargin = 10*60; //10 minutes 'timeout' essentially
       if (seconds == -1) { return "undefined"; }
@@ -135,7 +146,11 @@ class printObject {
       else {
         dayString = "" + monthNames[date.getMonth()] + ' ' + date.getDate();
       }
-      return dayString + ' at ' + date.getHours() + ':' + date.getMinutes();
+      var minutes = date.getMinutes();
+      if (minutes < 10) {
+        minutes = '0' + minutes;
+      }
+      return dayString + ' at ' + date.getHours() + ':' + minutes;
     }
 
     confirmReservation() {
@@ -150,6 +165,7 @@ class printObject {
       formData.set('duration', this.getDuration());
       formData.set('date', this.getSelectedReservationValue()); 
       formData.set('description', this.getFilename());
+      formData.set('class', this.getClassRelatedStatus());
       formData.set('device', 1);
 
       //must address cross-site post issue (for refresh of site)?
