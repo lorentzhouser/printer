@@ -24,7 +24,9 @@ gcodeProcessorWorker.onmessage = function (e) {
     setProgressBarPercent(0);
   } else if ("result" in e.data) {
     const printEstimate = Math.floor(e.data.result['printTime']);    
+    const filamentLength = e.data.result['filamentUsage'];
     currentPrintObject.setDuration(printEstimate);
+    currentPrintObject.setFilamentLength(filamentLength);
     const url='http://localhost:1337/reservation-proposal/'+printEstimate;
     Http.open("GET", url);
     Http.send();

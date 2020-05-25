@@ -727,7 +727,7 @@ function GcodeProcessor() {
                     totalConstantSpeedDistance += gcode.phaseDistance[1];
                     totalDeccelerationDistance += gcode.phaseDistance[2];
                     // Speed Time Histogram
-                    this.calculateSTHistogram(gcode);
+                    /////////// this.calculateSTHistogram(gcode);
                 }
 
                 // Clear Gcode
@@ -778,7 +778,7 @@ function GcodeProcessor() {
         result["zHopTime"] = secondsToHMS(zHopTime);
         result["retractCount"] = Math.floor(retractCount);
         result["retractTime"] = secondsToHMS(retractTime);
-        result["filamentUsage"] = (filamentUsage / 1000).toFixed(2) + " m";
+        result["filamentUsage"] = (filamentUsage / 1000).toFixed(2);
         result["xyFeedrate"] = (xyFeedrateMin * 60).toFixed(0) + " (" + xyFeedrateMin.toFixed(2) + "mm/s) / " + (xyFeedrateMax * 60).toFixed(0) + " (" + xyFeedrateMax.toFixed(2) + "mm/s)";
         result["filamentUsageRate"] = (filamentUsage / totalTime).toFixed(2) + " mm/s, " + (filamentUsage / 10 / totalTime * 60).toFixed(2) + " cm/min";
         result["filamentLineRatio"] = (printDistance / filamentUsage).toFixed(2) + " mm";

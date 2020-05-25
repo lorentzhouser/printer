@@ -20,6 +20,7 @@ class printObject {
     setFilename(filename) { this.filename = filename; }
     setDuration(duration) { this.duration = duration; }
     setStartTime(startTime) { this.startTime = startTime; }
+    setFilamentLength(filamentLength) { this.filamentLength = filamentLength; }
     //update to recommended time-slot-object when printer details incorporated
     setRecommendedTime(seconds) { this.recommendedTime = seconds; }
     setUrgentTime(seconds) { this.urgentTime = seconds; }
@@ -34,6 +35,8 @@ class printObject {
     }
     getDuration() { return this.duration; }
     getStartTime() { return this.startTime; }
+    getEndTime() { return Number(this.startTime) + Number(this.duration); }
+    getFilamentLength(filamentLength) { return this.filamentLength + ' m'; }
     getRecommendedTime() { return this.recommendedTime; }
     getUrgentTime() { return this.urgentTime; }
     getHumanReadableRecommendedTime() { return printObject.getGenericHumanReadableDate(this.recommendedTime); }
@@ -105,7 +108,13 @@ class printObject {
       //boolean function that parses the extension from filename to check for correct filetype
       const nameElements = filename.split(".");
       const fileTypeName = nameElements[nameElements.length-1].toLowerCase();
-      return ((fileTypeName == 'gcode') && (nameElements.length == 2));
+      if (fileTypeName == 'icloud') {
+        alert('The file that you are trying to upload is in the cloud. Download it offline to your computer before uploading it here');
+      }
+      nameElements.forEach(name => {
+        console.log(name);
+      });
+      return ((fileTypeName == 'gcode')); // && (nameElements.length == 2))
     }
     //deallocation of memory and destroy upon uploading a new file
 

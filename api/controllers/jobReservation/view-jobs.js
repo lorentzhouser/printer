@@ -78,7 +78,9 @@ module.exports = {
         humanReableDate = dayString + ' at ' + formattedDate.getHours() + ':' + minutes;        
         
         jobs[i].date = humanReableDate;
-        jobs[i].duration = durationDate;
+        // jobs[i].duration = durationDate; //don't think this is necessary anymore
+        jobs[i].hours = durationDate.getHours();
+        jobs[i].mins = durationDate.getMinutes();        
       }
 
       return { allJobs: jobs };

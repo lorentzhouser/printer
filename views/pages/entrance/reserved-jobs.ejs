@@ -54,12 +54,15 @@
                 
                 <!-- <div><%= p.username %></div> -->
                 <!-- <div><%= p.description %></div> -->
+                
+                <!-- should show which jobs are current -->
                 <div style="margin-top: 10px; padding: 10px; width: 80%; float: left; height: 100%; background-color: tomato;">
                     <div style="font-size: x-small; width:100%; text-align: right;">ID <%= p.id %></div>
                     <div style='width: 40%; float: left; text-align: right; padding-right: 2px;'>start -</div>
                     <div style='width: 60%; float: left; text-align: left; padding-left: 2px;'><%= p.date %></div>
                     <div style='width: 40%; float: left; text-align: right; padding-right: 2px;'>duration -</div>
-                    <div style='width: 60%; float: left; text-align: left; padding-left: 2px;'><%= p.duration.getHours() %> hrs <%= p.duration.getMinutes() %> min</div>
+                    <div style='width: 60%; float: left; text-align: left; padding-left: 2px;'><%= p.hours %> hrs <%= p.mins %> min</div>
+                    
                     <div style='width: 40%; float: left; text-align: right; padding-right: 2px;'>printer -</div>
                     <div style='width: 60%; float: left; text-align: left; padding-left: 2px;'><%= p.device %></div>
                 </div>

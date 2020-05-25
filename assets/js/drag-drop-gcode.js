@@ -60,8 +60,13 @@ function refreshGCodeNotificationView() {
   }
   
 function moveToConfirmation() {
+    //dynamically create insert of receipt?
     var schedule = document.getElementById('confirm-schedule');
     schedule.innerHTML = currentPrintObject.getSelectedReservation(); //make human readable
+    // var filament = document.getElementById('confirm-printer');
+    // filament.innerHTML = currentPrintObject.getPrinter();
+    var filament = document.getElementById('confirm-filament');
+    filament.innerHTML = currentPrintObject.getFilamentLength();
     var detailsDialog = document.getElementById('DetailsDialog');
     detailsDialog.classList = 'DetailsDialogSlide';
 }
