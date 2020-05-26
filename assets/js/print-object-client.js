@@ -121,7 +121,7 @@ class printObject {
     //HUMAN READABLE FUNCTIONS
     getHumanReadableTimeEstimate() {
       if (this.duration == -1) { return "undefined"; }
-      var durationDate = new Date(1970, 0, 1); // Epoch
+      var durationDate = new Date(1970, 0, 1); // Epoch 
       durationDate.setSeconds(this.duration);
       return durationDate.getHours() + ' hrs ' + durationDate.getMinutes() + ' mins';
     }

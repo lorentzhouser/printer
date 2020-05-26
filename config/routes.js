@@ -33,6 +33,8 @@ module.exports.routes = {
   'GET /account':            { action: 'account/view-account-overview' },
   'GET /account/password':   { action: 'account/view-edit-password' },
   'GET /account/profile':    { action: 'account/view-edit-profile' },
+  'GET /all-job-reservation-data':    { action: 'jobReservation/get-all-jobs' },
+  'GET /job-reservations-data':    { action: 'jobReservation/get-jobs' },
   'GET /job-reservations':    { action: 'jobReservation/view-jobs' },
   
   'GET /reservation-proposal/:duration':    { action: 'jobReservation/propose-jobs' },
