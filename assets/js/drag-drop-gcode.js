@@ -61,10 +61,11 @@ function refreshGCodeNotificationView() {
   
 function moveToConfirmation() {
     //dynamically create insert of receipt?
+    const selectedReservation = currentPrintObject.getSelectedReservation();
     var schedule = document.getElementById('confirm-schedule');
-    schedule.innerHTML = currentPrintObject.getSelectedReservation(); //make human readable
-    // var filament = document.getElementById('confirm-printer');
-    // filament.innerHTML = currentPrintObject.getPrinter();
+    schedule.innerHTML = selectedReservation.startTime; //make human readable
+    var printer = document.getElementById('confirm-printer');
+    printer.innerHTML = 'Printer '+ selectedReservation.device;
     var filament = document.getElementById('confirm-filament');
     filament.innerHTML = currentPrintObject.getFilamentLength();
     var detailsDialog = document.getElementById('DetailsDialog');
