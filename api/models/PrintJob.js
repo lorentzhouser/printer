@@ -129,6 +129,48 @@ module.exports = {
       return date.getHours()*60*60 + date.getMinutes()*60 + date.getSeconds();
     },
 
+    getLongprintRecommendedSlots: async function (printSlots, reservationDuration, startingWorkHour, finishingWorkHour) { 
+      /*
+      - Make sure slots are outside of working hours.
+      - Should not recommend more than 3 hours into working hours.
+      */
+      //TUNING VARIABLE -> how many morning working hours allowed
+      const peekingHours = 3;
+
+      var recommendedSlots = [];
+      
+      printSlots.forEach(slot => {
+        const slotStartHour = this.getHourOfDayForUTCSeconds(slot[1]);
+        console.log(reservationDuration+slot[1]);
+        const slotEndHour = this.getHourOfDayForUTCSeconds(Number(reservationDuration) + Number(slot[1]));
+
+        console.log('SLOT- startHOUR: ' + slotStartHour + ' endHOUR: ' + slotEndHour);
+
+        if (slotStartHour >= finishingWorkHour && (slotEndHour-3 <= startingWorkHour || slotEndHour > finishingWorkHour)) {
+          recommendedSlots.push(slot);
+        }
+      });
+      
+      /*
+        Recommend next day if no slots pushed
+      */
+       if (recommendedSlots.length == 0) {
+        const finalSlot = printSlots.filter(slot => { return slot[0] == -1; })[0];
+        const finalSlotStartHour = this.getHourOfDayForUTCSeconds(finalSlot[1]);
+        const finalSlotDate = this.dateFromUTCSeconds(finalSlot[1]);
+        finalSlotDate.setSeconds(0);
+        finalSlotDate.setMinutes(0);
+        finalSlotDate.setHours(finishingWorkHour);
+        if (finalSlotStartHour >= finishingWorkHour) {
+          //add slot at startingWorkHour of the next day
+          finalSlotDate.setDate(finalSlotDate.getDate() + 1);
+        }
+        recommendedSlots.push([-1, finalSlotDate.getTime()/1000]);
+      } 
+
+      return recommendedSlots;
+    },
+
     getRecommendedSlots: async function (printSlots, reservationDuration, startingWorkHour, finishingWorkHour) {
       /*
       - Make sure slots are within working hours
@@ -137,7 +179,6 @@ module.exports = {
       */
 
       var recommendedSlots = [];
-      // const lastSlot = printSlots.filter(slot => { return slot[0] == -1; });
       
       printSlots.forEach(slot => {
         const slotStartHour = this.getHourOfDayForUTCSeconds(slot[1]);
@@ -172,7 +213,7 @@ module.exports = {
         finalSlotDate.setSeconds(0);
         finalSlotDate.setMinutes(0);
         finalSlotDate.setHours(startingWorkHour);
-        if (finalSlotStartHour < 0 || finalSlotStartHour > 12) {
+        if (finalSlotStartHour > 12) {
           //add slot at startingWorkHour of the next day
           finalSlotDate.setDate(finalSlotDate.getDate() + 1);
         }
@@ -210,12 +251,17 @@ module.exports = {
       - at simplest level. a boolean method isCongrested() determines work day start and end
       - more advanced might be based on semester calendar
       */
+      const longPrintCriteria = 5*60*60; //5 hours or more
+
+
       const startingWorkHour = 8;
       const finishingWorkHour = 17;
       const printSlots = await this.getTimeSlots(reservationDuration);
       const recommendedSlots = await this.getRecommendedSlots(printSlots, reservationDuration, startingWorkHour, finishingWorkHour);
+      const longprintRecommendedSlots = await this.getLongprintRecommendedSlots(printSlots, reservationDuration, startingWorkHour, finishingWorkHour);
+      
 
-      const recommendedJob = await this.proposeRecommendedJob(recommendedSlots);
+      const recommendedJob = reservationDuration < longPrintCriteria ? await this.proposeRecommendedJob(recommendedSlots) : longprintRecommendedSlots[0][1];
       const urgentJob = await this.proposeUrgentJob(printSlots);
 
       return { 
