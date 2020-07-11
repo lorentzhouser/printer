@@ -87,8 +87,11 @@ module.exports = {
 				printer: printer,
 				jobs: jobs.filter(job => { return job.device == printer; }),
 			} 
-		});
-
+		})/*.sort((first, second) => {
+      return first.jobs.length - second.jobs.length;
+    });
+    -if useful to find printers with least number of jobs first
+    */
 		var allPrintSlots = [];
 		jobsByPrinter.forEach(queue => {
 			const printer = queue.printer;
@@ -258,7 +261,12 @@ module.exports = {
     },
 
     proposeUrgentJob: async function (printSlots) {
-	  if (printSlots.length <= 0) { console.log("print slots should always be greater than 0 because of appended final infinite slot"); }
+    if (printSlots.length <= 0) { console.log("print slots should always be greater than 0 because of appended final infinite slot"); }
+    
+    printSlots.forEach(slot => {
+      console.log(slot.startTime);
+    }); 
+
 	  const sortedPrintSlots = printSlots.sort((first, second) => { return first.startTime - second.startTime });
       return sortedPrintSlots[0];
     },
@@ -288,8 +296,7 @@ module.exports = {
 		const urgentSlot = await this.proposeUrgentJob(printSlots);
 		console.log('recommended printer for slot: ' + recommendedSlot.device);
 		console.log('urgent printer for slot: ' + urgentSlot.device);
-
-		printSlots.forEach(slot => { console.log(slot.startTime); });
+    console.log(urgentSlot.startTime);
 
 		recommendedJob = reservationDuration < longPrintCriteria ? recommendedSlot : longprintRecommendedSlots[0];
 		urgentJob = urgentSlot;
@@ -302,4 +309,5 @@ module.exports = {
     },
 
   };
+  
   

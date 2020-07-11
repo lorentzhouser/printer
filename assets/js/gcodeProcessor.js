@@ -9,11 +9,16 @@ onmessage = function (e) {
         postMessage({ "resultFormat": gcodeProcessor.results });
     } else if (e.data == "cleanup") {
         gcodeProcessor = undefined;
-    } else {
-        gcodeProcessor = new GcodeProcessor();
-        var settings;
-        [gcodeLines, settings] = e.data;
-        gcodeProcessor.processGcodes(gcodeLines, settings);
+    } else { 
+        if (e.data.message == 'processGcodes') {
+           gcodeProcessor = new GcodeProcessor();
+            var settings;
+            [gcodeLines, settings] = e.data.data;
+            gcodeProcessor.processGcodes(gcodeLines, settings);
+        }
+        else {
+            console.log('uncertain what this is');
+        }
     }
 }
 

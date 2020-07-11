@@ -74,7 +74,10 @@ function displayProgressBar() {
 function refreshStatistics() {
   if (gcodeLines != undefined) {
     displayProgressBar();
-    gcodeProcessorWorker.postMessage([gcodeLines, simpleSettingsDict(selectedSettings)]);
+    gcodeProcessorWorker.postMessage({
+		message: 'process',
+		data: [gcodeLines, simpleSettingsDict(selectedSettings)]
+	});
     currentCalculationSetting = selectedSettings;
   }
 }
