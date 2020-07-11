@@ -25,18 +25,20 @@
             
             <div class="TimeContainer">
                 <div class="LeftColumnTitle"></div>
-                <div class="TimeElement" v-for="time in timeline">{{time}}</div>
+                <div class="TimeElement" v-for="time in timeline">
+                    <div class="Day">{{time.date}}</div>
+                    <div class="Time">{{time.time}}</div>
+                </div>
             </div>
-        
+            
             <div class="Queue" v-for="printerQueue in computedPrinterQueues">
-                <!-- <div class="NowIndicator" v-bind:style="{ left: NowIndicator } "></div> -->
-
                 <div class="Job" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
                 <!-- <div class="LeftColumnTitle">{{printerQueue.device}}</div>
                 <div class="JobContainer">
                     <div class="Job" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
                 </div> -->
             </div>
+            
         </div>
         <div class="SlideContainer">
             <input type="range" class="Slider" min="1" max="6" step="1" v-model="sliderValue">
@@ -47,7 +49,7 @@
         new Vue({
             el: '#GantApp',
             data: {
-                sliderValue: 3, //slider value is simply the number of hours for an interval.
+                sliderValue: 1, //slider value is simply the number of hours for an interval.
                 printerQueues: [
                     {
                         device: 1,
@@ -98,9 +100,6 @@
                 startTime: -1,
             },
             computed: {
-                NowIndicator: function() {
-
-                },
                 computedPrinterQueues: function() {
                     const computedPrinterQueue = this.printerQueues;
                     computedPrinterQueue.forEach(printerQueue => {
@@ -142,8 +141,6 @@
 
                             
                             const distanceFromLocalHour = (deltaTimeInHours*10)/Number(this.sliderValue);
-                            console.log(distanceFromLocalHour);
-                            
                             // console.log('distanceFromLocalHour %: ' + distanceFromLocalHour);
                             job.left = distanceFromLocalHour+'%';
                         });
@@ -155,6 +152,11 @@
                     important that this accomdates css flex
                     starting with 2 hour intervals. width between time stamps is defined by a percentage number
                     */
+
+                    var dateForTimeElement = new Date();
+
+                    const dayString = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+
                     const currentHour = (new Date()).getHours();
                     const currentSeconds = Date.now()/1000; //seems to be millis
                     this.startTime = currentSeconds;
@@ -179,7 +181,10 @@
 
 
                     var timelineObject = [];
-                    timelineObject.push(currentHour); 
+                    timelineObject.push({
+                        time: currentHour,
+                        date: ""
+                    }); 
                     /*
                     timelineObject = [
                         22,
@@ -196,24 +201,38 @@
 
                     while ( i <= 11 || sumTime <= timelineDurationSeconds ) {
                         sumTime += Number(this.sliderValue) * 3600;
-                        const lastNumber = timelineObject[timelineObject.length-1];
+                        const lastNumber = timelineObject[timelineObject.length-1].time;
                         const tentativeNextNumber = Number(lastNumber) + Number(this.sliderValue);
 
                         if (tentativeNextNumber >= 24) {
-                            timelineObject.push(Number(tentativeNextNumber-24));
+                            //add day here
+                            timelineObject.push({
+                                time: Number(tentativeNextNumber-24),
+                                date: dayString[dateForTimeElement.getDay()] + " " + dateForTimeElement.getDate()
+                            });
+                            dateForTimeElement.setDate(dateForTimeElement.getDate() + 1);
                         }
                         else {
-                            timelineObject.push(tentativeNextNumber);
+                            timelineObject.push({
+                                time: tentativeNextNumber,
+                                date: (i == 1) ? (dayString[dateForTimeElement.getDay()] + " " + dateForTimeElement.getDate()) : ""
+                            });
+                            if (i == 1) { 
+                                dateForTimeElement.setDate(dateForTimeElement.getDate() + 1);
+                            }
                         }
                         i++;
                     }
 
                     timelineObject = timelineObject.map(numObj => {
-                        return (numObj < 10) ? ('0' + numObj + ':00') : (''+ numObj + ':00')
+                        return {
+                            time: (numObj.time < 10) ? ('0' + numObj.time + ':00') : (''+ numObj.time + ':00'),
+                            date: numObj.date
+                        }
                     });
 
                     //remove first time for clarity (temporarily for testing)
-                    timelineObject[0] = '';
+                    timelineObject[0] = {};
 
                     return timelineObject;
                 },
