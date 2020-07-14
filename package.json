@@ -12,6 +12,7 @@
     "connect-redis": "^4.0.4",
     "csurf": "^1.11.0",
     "express-session": "^1.17.0",
+    "grunt-contrib-sass": "^1.0.0",
     "nodemon": "^2.0.2",
     "sails": "^1.2.3",
     "sails-hook-apianalytics": "^2.0.3",

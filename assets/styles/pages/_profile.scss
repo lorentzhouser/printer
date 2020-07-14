@@ -1,0 +1,27 @@
+#profile-page {
+  max-width: $sm;
+  form {
+    margin: 2rem 0;
+  }
+
+  #is_komite ~ .input-field {
+    margin-top: 1rem;
+    display: none;
+  }
+
+  #is_komite:checked ~ .input-field {
+    display: block;
+  }
+
+  .my-books {
+    .box-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+      button img {
+        width: 1rem;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}

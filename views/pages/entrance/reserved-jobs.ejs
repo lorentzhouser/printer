@@ -17,14 +17,15 @@
             }
         }
     </script>
-    <!-- one day could span over 150% of the width of the screen as default.  -->
     
+    <div class="PageTitle">Printers</div>
+
     <div id="GantApp">
 
         <div class="HorizontalScrollingContainer" id="ScrollingContainer">
             
             <div class="TimeContainer">
-                <div class="LeftColumnTitle"></div>
+                <!-- <div class="LeftColumnTitle"></div> -->
                 <div class="TimeElement" v-for="time in timeline">
                     <div class="Day">{{time.date}}</div>
                     <div class="Time">{{time.time}}</div>
@@ -32,16 +33,33 @@
             </div>
             
             <div class="Queue" v-for="printerQueue in computedPrinterQueues">
+                <div class="LeftColumnTitle">{{printerQueue.device}}</div>
                 <div class="Job" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
-                <!-- <div class="LeftColumnTitle">{{printerQueue.device}}</div>
-                <div class="JobContainer">
-                    <div class="Job" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
-                </div> -->
+                <div class="RightColumnOpacity"></div>
             </div>
-            
+            <div class="ScrollMargin"></div>
         </div>
+        
         <div class="SlideContainer">
             <input type="range" class="Slider" min="1" max="6" step="1" v-model="sliderValue">
+        </div>
+
+        <div class="Legend">
+            <div>
+                <div class="Key" style="background-color: #F0AE1A;"></div>
+                <div class="LegendText">Urgent</div>
+            </div>
+            <div>
+                <div class="Key" style="background-color: #3B208B;"></div>
+                <div class="LegendText">Private</div>
+            </div>
+        </div>
+
+        <div class="Actions">
+            <button class="GantAction">Printer Error</button>
+            <button class="GantAction">Contact Author</button>
+            <button class="GantAction">Request Slot</button>
+            <button class="GantAction">Other Actions?</button>
         </div>
     </div>
 
@@ -76,7 +94,7 @@
                             },
                             {
                                 duration: 19000,
-                                date: Number(Date.now()/1000 + 96500),
+                                date: Number(Date.now()/1000 + 15000),
                                 priority: 'Job',
                             },
                         ]
