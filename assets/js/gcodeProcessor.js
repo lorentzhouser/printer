@@ -17,7 +17,8 @@ onmessage = function (e) {
             gcodeProcessor.processGcodes(gcodeLines, settings);
         }
         else {
-            console.log('uncertain what this is');
+            // console.log(e.data);
+            // console.log('uncertain what this messages is');
         }
     }
 }

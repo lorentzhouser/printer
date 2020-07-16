@@ -1,0 +1,28 @@
+
+
+Logg inn
+
+
+<%- partial('../components/navbar.ejs') %>
+<div id="login-page" class="container nav max-mobile center">
+    <h1 class="center">Logg inn</h1>
+    <br><br><br><br>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-field fluid">
+            {{ form.email }}
+            <label for="{{ form.email.id_for_label }}">E-post</label>
+            {{ form.email.errors }}
+        </div>
+        <div class="input-field fluid">
+            {{ form.password }}
+            <label for="{{ form.email.id_for_label }}">Passord</label>
+            {{ form.password.errors }}
+        </div>
+        <button class="button fluid" type="submit"><span>Logg inn<span></button>
+        <br><br><br>
+        <a class="button secondary center" href="{% url 'register' %}" style="width: 80%"><span>Registrer ny bruker</span></a>
+        <br><br>
+        <a class="link center" href="/accounts/password_reset">Glemt passordet?</a>
+    </form>
+</div>

@@ -8,7 +8,11 @@ window.addEventListener("drop", function(e) {
       currentPrintObject = new printObject(e.dataTransfer);
     
       textLinesFromFile(currentPrintObject.getFileData(), function (lines) {
-          gcodeProcessorWorker.postMessage([lines, settings]);
+          gcodeProcessorWorker.postMessage({
+            message: 'processGcodes',
+            data: [lines, settings]
+          });
+              
       });
 
       document.getElementById("GCodeTitle").innerHTML = currentPrintObject.getFilename();

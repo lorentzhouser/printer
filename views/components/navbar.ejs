@@ -1,0 +1,59 @@
+<nav id="main-navigation">
+    <a href="/" id="leo-logo" class="nav-item">
+        <img src="/images/logo/Logo/Inverse.svg" alt="Leonardo-logoen">
+    </a>
+    <div id="hamburger" class="closed">
+        <div class="bar"></div>
+        <div id="middle" class="bar"></div>
+    </div>
+    <ul class="item-list">
+        <li id="close-nav" class="nav-item"><img src="/images/logo/icons/close_white.svg" alt="close"></li>
+        <li class="nav-item dropdown">
+            <span>Student</span>
+            <ul>
+                <li><a class="nav-item" href="">Tips og triks</a></li>
+                <li class=""><a class="nav-item" href="">Fag</a></li>
+                <li class=""><a class="nav-item" href="">Boksalg</a></li>
+                <li><a class="nav-item" href="">Jobb</a></li>
+                <li class=""><a class="nav-item" href="" disabled="">Ny student?</a></li>
+                <li class=""><a class="nav-item" href="">Utveksling</a></li>
+                <li class=""><a class="nav-item" href="">Klasseturer</a></li>
+            </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+            <span>Leonardo</span>
+            <ul>
+                <li class="selected"><a class="nav-item"
+                        href="">Komiteer</a></li>
+                <li class="selected"><a class="nav-item"
+                        href="">TheSign</a></li>
+                <li class="selected"><a class="nav-item"
+                        href="">Om oss</a></li>
+                <% if(me) { %>
+                <li class="selected"><a class="nav-item"
+                        href="">Vedtekter</a></li>
+                <% } %>
+            </ul>
+        </li>
+
+        <li><a class="nav-item" href="">Prosjekter</a></li>
+
+        <li><a class="nav-item" href="">Arrangementer</a></li>
+
+        <li><a class="nav-item selected"
+                href="/job-reservations">Print</a></li>
+
+        <% if(me) { %>
+        <li><a class="nav-item user selected" href="/account">
+                <div class="face">
+                    <div class="eyes left"></div>
+                    <div class="eyes right"></div>
+                    <div class="mouth"></div>
+                </div>Min side
+            </a></li>
+        <% } else { %>
+        <li><a class="nav-item login selected" href="/login">Logg inn</a></li>
+        <% } %>
+    </ul>
+</nav>

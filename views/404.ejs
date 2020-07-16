@@ -1,10 +1,11 @@
-<div id="404">
-  <div class="container text-center">
-    <h1 class="display-1 mb-3">404</h1>
-    <hr/>
-    <h2>The page you seek doesn't exist.</h2>
-    <div class="help">
-      <p>Think you're seeing this message in error?<br/><span class="mobile-spacer">&nbsp;</span>Please <a href="/contact">let us know.</a></p>
-    </div>
-  </div>
+{% extends 'base.html' %}
+
+<p id="error">404 - page not found</p>
+<div id="leo-snake__score">
+    <div id="score">0</div>
+    <div id="highscore">Highscore: <span>81</span></div>
 </div>
+<canvas id="leo-snake"></canvas>
+
+<script src="js/404/snake.js"></script>
+

@@ -8,7 +8,7 @@ module.exports = {
     exits: {
   
       success: {
-        viewTemplatePath: 'pages/entrance/reserved-jobs',
+        viewTemplatePath: 'pages/reserved-jobs',
       },
   
       redirect: {
