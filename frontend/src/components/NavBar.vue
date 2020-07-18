@@ -1,8 +1,8 @@
 <template>
     <nav id="main-navigation">
-        <a href="/" id="leo-logo" class="nav-item">
+        <router-link to="/" id="leo-logo" class="nav-item">
             <img src="../assets/img/Logo/Inverse.svg" alt="Leonardo-logoen">
-        </a>
+        </router-link>
         <div id="hamburger" class="closed">
             <div class="bar"></div>
             <div id="middle" class="bar"></div>
@@ -12,7 +12,7 @@
             <li class="nav-item dropdown">
                 <span>Student</span>
                 <ul>
-                    <li><a class="nav-item" href="">Tips og triks</a></li>
+                    <li><router-link to="/student/tips" class="nav-item">Tips og triks</router-link></li>
                     <li class=""><a class="nav-item" href="">Fag</a></li>
                     <li class=""><a class="nav-item" href="">Boksalg</a></li>
                     <li><a class="nav-item" href="">Jobb</a></li>
@@ -41,8 +41,7 @@
             <li><a class="nav-item" href="">Prosjekter</a></li>
 
             <li><a class="nav-item" href="">Arrangementer</a></li>
-
-            <li><a class="nav-item" href="/job-reservations">Print</a></li>
+            <li><router-link to="/job-reservations" class="nav-item">Print</router-link></li>
 
             <!-- <% if(me) { %> -->
             <!-- <li><a class="nav-item user selected" href="/account">

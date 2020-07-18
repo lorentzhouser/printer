@@ -46,7 +46,7 @@
 // import axios from "axios";
 
 export default {
-    name: 'JobReservation',
+    name: 'JobReservations',
     data: function () {
         return {
             sliderValue: 1, //slider value is simply the number of hours for an interval.
