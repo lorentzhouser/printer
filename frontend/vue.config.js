@@ -1,3 +1,4 @@
+const WorkerPlugin = require('worker-plugin')
 module.exports = {
   css: {
     loaderOptions: {
@@ -11,5 +12,26 @@ module.exports = {
         `
       }
     }
+  },
+  configureWebpack: {
+    output: {
+      globalObject: "this"
+    },
+    plugins: [
+      new WorkerPlugin()
+    ]
   }
 };
+
+
+
+
+
+// build: {
+//   extend(config, { isDev, isClient }) {
+//     config.module.rules.push({
+//       test: /\.worker\.js$/,
+//       use: { loader: "worker-loader" }
+//     });
+//   }
+// }

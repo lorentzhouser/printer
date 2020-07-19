@@ -1,18 +1,44 @@
 <template>
-  <div id="app">
+  <div id="app" @drop.prevent="dropped" @dragover.prevent>
     <link href="https://fonts.googleapis.com/css?family=PT+Serif:700&display=swap" rel="stylesheet">
     <NavBar/>
+    <ReservationModule v-bind:visibilty="notifVisible" v-bind:file="file" v-on:toggleVisibility="toggleNotificationVisibility"/>
     <router-view/>
   </div>
 </template>
 
 <script>
 import NavBar from './components/NavBar.vue'
+import ReservationModule from './components/ReservationModule/ReservationModule.vue'
 
 export default {
   name: 'App',
   components: {
-    NavBar
+    NavBar,
+    ReservationModule,
+  },
+  data: function() {
+    return {
+      notifVisible: true,
+      file: '',
+    }
+  },
+  methods:{
+    dropped(e) { 
+      let droppedFiles = e.dataTransfer.files;
+      if(!droppedFiles) return;
+      if(droppedFiles.length>1) {
+        console.log('alert of two many files added');
+      }
+      else {
+        this.toggleNotificationVisibility(true);
+        this.file = droppedFiles[0];
+        
+      }
+    },
+    toggleNotificationVisibility(visibility) {
+      this.notifVisible = visibility;
+    }
   }
 }
 </script>

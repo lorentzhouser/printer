@@ -1,234 +1,176 @@
 <template>
-    <div id="GCodeDropNotification" class="GCodeReservation">
-        <div class="GCodeReservation" id="GCodeReservation">
-            <div class="GCodeReservationInfoContainer" id="back">
-                <div class="GCodeTitle subtitle2" id="GCodeTitle">
-                    project_name.gcode
-                </div>
-                <div class="GCodeDetail caption">
-                <!-- <div id="PreviousButton"><</div> -->
-                <div id="LoadingBar"></div>
-                <div id="GCodeTimeEstimate"></div>
-                </div>
-            </div>
-            <div class="Button GCodeClose" id="cancelButton"></div>
-            
-            <div id="DetailsDialog">
-            <!-- First Slide Page -->
-            <div id="PrintOptions">replaced by print object details</div>
-            <!-- Second Slide Page -->
-            <div id="Confirmation">
-                <div class="receipt">
-                <div id="confirm-schedule" class="subtitle">
-                    8:15 tomorrow morning 
-                </div>
-                <div id="confirm-printer" class="caption">
-                    printer 1
-                </div>
-                <div id="confirm-filament" class="caption">
-                    1600.01 mm 
-                </div>
-                </div>
-                <div id="reserve-button" class="confirm Button">RESERVE</div>
-            </div>
-            </div>
+    <div class="Notification">
+        <div id="GCodeDropNotification" class="GCodeReservation">
+          <div class="GCodeReservation" v-bind:class="{ Visible: visibilty, ShowDetail: showDetail }" id="GCodeReservation">
+              <div class="GCodeReservationInfoContainer" id="back" @click="back">
+                  <div class="GCodeTitle subtitle2" id="GCodeTitle">
+                      {{this.fileObject.filename}}
+                  </div>
+                  <div class="GCodeDetail caption">
+                  <div id="LoadingBar" :style="{width:progressPercent + '%'}"></div>
+                  <div id="GCodeTimeEstimate">{{fileObject.humanReadableDuration}}</div>
+                  </div>
+              </div>
+              <div @click="hide" class="Button GCodeClose" id="cancelButton"></div>
+              <div id="DetailsDialog" v-bind:class=" { DetailsDialogSlide : showConfirmation }">
+                <Options v-bind:proposal="proposal" v-on:selectOption="selectOption" v-on:hide="hide" v-on:makeCourseRelated="makeCourseRelated"/>
+                <Confirmation v-bind:receipt="generateReceipt"/>
+              </div>
+          </div> 
         </div>
-        </div>
+    </div>
 </template>
 
 <script>
+import axios from 'axios'
+import Options from './Options.vue'
+import Confirmation from './Confirmation.vue'
+var gcodeProcessorWorker = new Worker('../../assets/js/GcodeProcessor.js', { type: "module" });
+
 export default {
-    name: 'ReservationModule'
+    name: 'ReservationModule',
+    components: {
+      Options,
+      Confirmation
+    },
+    props: ["visibilty", "file"],
+    data: function() {
+      return {
+        progressPercent: 0,
+        fileObject: { 
+          filename: 'filename.gcode',
+          duration: 5353,
+          humanReadableDuration: '',
+          filament: 5932,
+          courseRelated: false,
+          lines: ''
+        },
+        proposal: {
+          recommended: {
+            startTime: 100,
+            printer: 1
+          },
+          urgent: {
+            startTime: 50,
+            printer: 2
+          },
+        },
+        selectedOption: '',
+      }      
+    },
+    computed: {
+      showDetail: function() {
+        if (Object.keys(this.proposal).length === 0) {
+          return false;
+        }
+        return true;
+      },
+      showConfirmation: function() {
+        if (this.selectedOption === '') {
+          return false;
+        }
+        return true;
+      },
+      generateReceipt: function() {
+        var receipt = {
+          startTime: '',
+          device: '',
+          filament: this.fileObject.filament,
+        };
+        
+        if (this.selectedOption == 'recommended') {
+          receipt.startTime = this.proposal.recommended.startTime;
+          receipt.printer = this.proposal.recommended.printer;  
+        }
+        else if (this.selectedOption == 'urgent') {
+          receipt.startTime = this.proposal.urgent.startTime;
+          receipt.printer = this.proposal.urgent.printer;  
+        }
+         
+        return receipt;
+      }
+    },
+    mount: function() {
+      
+    },
+    watch: {
+      file: function() {
+        this.listenToMessages();
+        const self = this;
+        if (this.file) {
+          //page opacity perhaps css
+          this.textLinesFromFile(this.file, function (lines) {
+            console.log('lines captured');
+            self.fileObject.lines = lines;
+            const settings = {"maxSpeed":[100,100,10,100],"maxPrintAcceleration":[1000,1000,100,10000],"maxTravelAcceleration":[1000,1000,100,10000],"maxJerk":[10,10,1,10],"absoluteExtrusion":false,"feedrateMultiplyer":100,"filamentDiameter":1.75,"firmwareRetractLength":2,"firmwareUnretractLength":2,"firmwareRetractSpeed":50,"firmwareUnretractSpeed":50,"firmwareRetractZhop":0,"timeScale":1.01};
+            gcodeProcessorWorker.postMessage({
+                message: 'processGcodes',
+                data: [lines, settings]
+            });
+          });
+          this.fileObject.filename = this.file.name;
+        }
+        else {
+          this.hide();
+        }
+      }
+    },
+    methods: {
+      //works but whole module needs restructuring
+      hide: function() {
+        this.$emit('toggleVisibility', false);
+        this.resetData();
+      },
+      back: function() {
+        this.selectedOption = '';
+      },
+      selectOption: function(option) {
+        this.selectedOption = option;
+      },
+      resetData: function() { 
+        this.proposal = {};
+      },
+      makeCourseRelated: function(checked) {
+        this.fileObject.courseRelated = checked;
+      },
+      textLinesFromFile: function(file, complete) {
+        var reader = new FileReader();
+        reader.onload = function(){
+          var lines = this.result.split(/\s*[\r\n]+\s*/g);
+          complete(lines);
+        };
+        reader.readAsText(file);
+      },
+      listenToMessages: function() {
+        var self = this;
+        gcodeProcessorWorker.onmessage = function (e) {
+        if ("progress" in e.data) {
+          self.progressPercent = e.data.progress;
+        } else if ("complete" in e.data) {
+          document.getElementById("LoadingBar").style.display = "none";
+          self.progressPercent = 0;
+        } else if ("result" in e.data) {
+          const result = e.data.result;
+          const duration = Math.floor(result.printTime);
+
+          self.fileObject.duration = duration
+          self.fileObject.filament = result.filamentUsage;
+          self.fileObject.humanReadableDuration = result.printTimeHumanReadable;
+
+          const url='http://localhost:1337/reservation-proposal/'+duration;
+          axios.get(url)
+            .then(res => this.proposal = res.data)
+            .catch(err => console.log("error " + err));
+
+        } else if ("layers" in e.data) {
+          gcodeProcessorWorker.postMessage("cleanup");
+        }
+      }
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-    #GCodeDropNotification {
-    
-    .GCodeReservation {
-      right: -310px;
-      transition: 1s right;
-      background-color: black;
-      color: white;
-      width: 300px;
-      position: absolute;
-      top: 80px;
-      display: block;
-      height: 70px;
-      // height: 270px;
-      z-index: 1000;
-      -webkit-box-shadow: -2px 2px 8px 0px rgba(0,0,0,0.75);
-      -moz-box-shadow: -2px 2px 8px 0px rgba(0,0,0,0.75);
-      box-shadow: -2px 2px 8px 0px rgba(0,0,0,0.75);
-      box-shadow: black;
-      -webkit-transition: all 0.5s ease-in-out;
-      -moz-transition: all 0.5s ease-in-out;
-      -o-transition: all 0.5s ease-in-out;
-      transition: all 0.5s ease-in-out;
-      overflow: hidden;
-    }
-
-    .Visible {
-      right: 0px;
-      // right: 200px;
-      -webkit-transition: all 1s ease-in-out;
-      -moz-transition: all 1s ease-in-out;
-      -o-transition: all 1s ease-in-out;
-      transition: all 1s ease-in-out;
-    }
-}
-
-.GCodeReservationInfoContainer {
-  width: 230px;
-  height: 70px;
-  background: black;
-  padding: 10px;
-  padding-top: 15px;
-  float: left;
-  cursor: pointer;
-}
-
-.GCodeReservationInfoContainer::selection {
-  color: none;
-  background: none;
-}
-/* For Mozilla Firefox */
-.GCodeReservationInfoContainer::-moz-selection {
-  color: none;
-  background: none;
-}
-
-#DetailsDialog {
-  display: block;
-  float: left;
-  width: 200%;
-  height: 200px;
-  border-top: 0.9px solid white;
-  box-sizing: border-box;
-  background-color: yellowgreen;
-  padding-top: auto;
-  -webkit-transition: all 0.5s ease-in-out;
-  -moz-transition: all 0.5s ease-in-out;
-  -o-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out;
-}
-
-.DetailsDialogSlide {
-  transform: translate(-300px, 0px);
-}
-
-#PrintOptions {
-  display: block;
-  padding: 10px;
-  float: left;
-  height: 100%;
-  width: 50%;
-  background-color: black;
-  color: white;
-}
-
-#Confirmation { 
-  display: block;
-  padding: 10px;
-  float: left;
-  height: 100%;
-  width: 50%;
-  background-color: black;
-  color: white;
-}
-.receipt {
-  margin-bottom: 20px;
-}
-
-.confirm {
-  cursor: pointer;
-  width: 100%;
-  height: 30%;
-}
-
-.confirm::selection {
-  color: none;
-  background: none;
-}
-/* For Mozilla Firefox */
-.confirm::-moz-selection {
-  color: none;
-  background: none;
-}
-
-.GCodeTitle {
-  cursor: pointer;
-  height: 55%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.GCodeTitle::selection {
-  color: none;
-  background: none;
-}
-/* For Mozilla Firefox */
-.GCodeTitle::-moz-selection {
-  color: none;
-  background: none;
-}
-
-#GCodeTimeEstimate {
-display: block;
-margin-top: auto;
-}
-
-#LoadingBar {
-display: block;
-background-color:white; 
-width: 0%;
-height: 5px;
-margin-top: 10px;
-}
-
-.MenuOption {
-  cursor: pointer;
-  height: 50px;
-  width: 100%;
-  overflow: hidden;
-}
-
-.InfoTextOption {
-  width: 85%;
-  float: left;
-}
-
-#arrow {
-  cursor: pointer;
-  display: block;
-  float: left;
-  background-color: black;
-  color: white;
-  text-align: right;
-  width: 10%;
-  height: 100%;
-  font-size: 15pt;
-}
-
-.PrivateOption {
-  cursor: pointer;
-  height: 30px;
-  width: 100%;
-}
-
-.GCodeClose {
-  float: left;
-  box-sizing: border-box;
-  height: 70px;
-  width: 70px;
-  text-align: center;
-  border-left: 0.9px solid white;
-  right: 0px;
-  background-image: url(../../icons/close_white_thin.svg);
-  background-size: 50% 50%;
-  background-repeat: no-repeat;
-  background-position-x: center;
-  background-position-y: center;
-}
+   @import "@/assets/css/components/_reservation-module.scss";
 </style>
