@@ -19,7 +19,7 @@ export default {
   },
   data: function() {
     return {
-      notifVisible: true,
+      notifVisible: false,
       file: '',
     }
   },

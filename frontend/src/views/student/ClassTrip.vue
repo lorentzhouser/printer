@@ -1,12 +1,12 @@
 <template>
-    <div id="study-abroad" class="container nav">
-        <h1>Utveksling</h1>
+    <div id="class-trip" class="container nav">
+        <h1>Klasseturer</h1>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'StudyAbroad',
+    name: 'ClassTrip',
     data: function() {
         return {
             

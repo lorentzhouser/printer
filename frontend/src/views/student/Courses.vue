@@ -54,37 +54,39 @@
 <script>
 export default {
     name: "Courses",
-    data: {
-        'query': '',
-        'searching': false,
-        'courses': [
-            {
-                id: 1,
-                slug: "yeah",
-                name: "Alphabet",
-                course_code: "ABCDE",
-                filter_name: "Design"
-            },
-        ],
-        'filters': [
-            {
-                id: 1,
-                name: "Design",
-                color: "white"
-            },
-            {
-                id: 2,
-                name: "K-emne",
-                color: "white"
-            }
-        ],
-        'sortKey': 'class_year',
-        'sortDirection': 1,
+    data() {
+        return {
+            'query': '',
+            'searching': false,
+            'courses': [
+                {
+                    id: 1,
+                    slug: "yeah",
+                    name: "Alphabet",
+                    course_code: "ABCDE",
+                    filter_name: "Design"
+                },
+            ],
+            'filters': [
+                {
+                    id: 1,
+                    name: "Design",
+                    color: "white"
+                },
+                {
+                    id: 2,
+                    name: "K-emne",
+                    color: "white"
+                }
+            ],
+            'sortKey': 'class_year',
+            'sortDirection': 1,
 
-        'courseCodeClass': [],
-        'courseClass': [],
-        'classYearClass': [],
-        'typeClass': []
+            'courseCodeClass': [],
+            'courseClass': [],
+            'classYearClass': [],
+            'typeClass': []
+        }
     },
     mounted: function () {
         self = this;
@@ -118,28 +120,28 @@ export default {
             this.filters = f;
             // this.doRequest();
         },
-        // doRequest: debounce(function () {
-        //     self = this;
-        //     this.courses = [];
-        //     // Searching = true if either query or filter is activated
-        //     this.searching = !this.query.length || !this.filters.length;
+        doRequest: debounce(function () {
+            self = this;
+            this.courses = [];
+             // Searching = true if either query or filter is activated
+            this.searching = !this.query.length || !this.filters.length;
 
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: '{% url 'courses' %}',
-        //         data: {
-        //             'q': self.query,
-        //             'filters': self.filters
-        //         },
-        //         success: function (data) {
-        //             self.courses = data.courses;
-        //             console.log(self.courses);
-        //         },
-        //         error: function (data) {
-        //             this.searching = false;
-        //         }
-        //     });
-        // }, 300),
+            $.ajax({
+                type: 'POST',
+                url: 'somecourseurl',
+                data: {
+                    'q': self.query,
+                    'filters': self.filters
+                },
+                success: function (data) {
+                    self.courses = data.courses;
+                    console.log(self.courses);
+                },
+                error: function (data) {
+                    this.searching = false;
+                }
+            });
+        }, 300),
         sortCourses: function (a, b) {
             return ((a[this.sortKey] > b[this.sortKey]) ? 1 : ((b[this.sortKey] > a[this.sortKey]) ? -1 : 0)) * this.sortDirection;
         }
