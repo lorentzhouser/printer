@@ -9,7 +9,7 @@
                 </div>
             </div>
 
-            <div class="Queue" v-bind:key="printerQueue.id" v-for="printerQueue in computedPrinterQueues">
+            <div class="Queue" v-bind:key="printerQueue.device" v-for="printerQueue in computedPrinterQueues">
                 <div class="LeftColumnTitle">{{printerQueue.device}}</div>
                 <div class="Job" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
                 <div class="RightColumnOpacity"></div>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 
 export default {
     name: 'JobReservations',
@@ -148,6 +148,7 @@ export default {
                 const currentHour = (new Date()).getHours();
                 const currentSeconds = Date.now()/1000; //seems to be millis
                 var endDateSeconds = currentSeconds;
+
                 this.printerQueues.forEach(printerQueue => {
                     printerQueue.jobs.forEach(job => {
                         const jobEndSeconds = Number(job.duration) + Number(job.date);
@@ -214,9 +215,11 @@ export default {
     },
     created() {
         //deal with cors
-        // axios.get("http://localhost:1337/job-reservations")
-        //     .then(res => this.printerQueues = res.data)
-        //     .catch(err => console.log(err));
+        axios.get("/job-reservations", {withCredentials: true})
+            .then(res => { 
+                this.printerQueues = res.data.printerQueues;
+                })
+            .catch(err => console.log(err));
     }
 }    
 </script>

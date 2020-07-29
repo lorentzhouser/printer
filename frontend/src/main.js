@@ -2,10 +2,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
+import axios from 'axios'
 import 'es6-promise/auto'
 
 Vue.config.productionTip = false
 Vue.use(Vuex)
+axios.defaults.baseURL = 'http://localhost:1337/';
 
 const store = new Vuex.Store({
   state: {
@@ -36,6 +38,7 @@ const store = new Vuex.Store({
 })
 
 new Vue({
+  axios,
   router,
   store,
   render: h => h(App)

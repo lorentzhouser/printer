@@ -6,11 +6,7 @@ module.exports = {
     description: 'Display jobs page.',
   
     exits: {
-  
-      success: {
-        viewTemplatePath: 'pages/entrance/reserved-jobs',
-      },
-  
+		
       redirect: {
         description: 'The requesting user is not logged in.',
         responseType: 'redirect'

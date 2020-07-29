@@ -20,6 +20,9 @@ module.exports = {
     plugins: [
       new WorkerPlugin()
     ]
+  },
+  devServer: {
+    proxy: 'http://localhost:1337'
   }
 };
 

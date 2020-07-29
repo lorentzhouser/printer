@@ -66,7 +66,7 @@ export default {
           waiting_list : ["me", "you", "dupree"],
           image : "../assets/dev_images/images/Immen_thornielsen_rektor_09oyYIG.jpg",
           thumbnail : {
-            url: "../assets/img/Logo/Inverse.svg",
+            url: "http://localhost:8080/assets/img/Logo/Inverse.svg",
             img: "img",
           },
         },
