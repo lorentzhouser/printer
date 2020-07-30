@@ -13,21 +13,12 @@ module.exports.routes = {
   //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
   //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
   //  ╚╩╝╚═╝╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
-  'GET /':                   { action: 'view-homepage-or-redirect' },
-  'GET /welcome/:unused?':   { action: 'dashboard/view-welcome' },
+  
+  'GET /email/confirm':      { action: 'account/confirm-email' },
 
-  'GET /faq':                { action:   'view-faq' },
-  'GET /legal/terms':        { action:   'legal/view-terms' },
-  'GET /legal/privacy':      { action:   'legal/view-privacy' },
-  'GET /contact':            { action:   'view-contact' },
-
-  'GET /signup':             { action: 'entrance/view-signup' },
-  'GET /email/confirm':      { action: 'entrance/confirm-email' },
-  'GET /email/confirmed':    { action: 'entrance/view-confirmed-email' },
-
-  'GET /login':              { action: 'entrance/view-login' },
-  'GET /password/forgot':    { action: 'entrance/view-forgot-password' },
-  'GET /password/new':       { action: 'entrance/view-new-password' },
+  'GET /login':              { action: 'account/view-login' },
+  'GET /password/forgot':    { action: 'account/view-forgot-password' },
+  'GET /password/new':       { action: 'account/view-new-password' },
 
   'GET /account':            { action: 'account/view-account-overview' },
   'GET /account/password':   { action: 'account/view-edit-password' },
@@ -61,14 +52,15 @@ module.exports.routes = {
   'PUT   /api/v1/account/update-password':            { action: 'account/update-password' },
   'PUT   /api/v1/account/update-profile':             { action: 'account/update-profile' },
   'PUT   /api/v1/account/update-billing-card':        { action: 'account/update-billing-card' },
-  'PUT   /api/v1/entrance/login':                        { action: 'entrance/login' },
-  'POST  /api/v1/entrance/signup':                       { action: 'entrance/signup' },
-  'POST  /api/v1/entrance/send-password-recovery-email': { action: 'entrance/send-password-recovery-email' },
-  'POST  /api/v1/entrance/update-password-and-login':    { action: 'entrance/update-password-and-login' },
+  'PUT   /api/v1/account/login':                        { action: 'acount/login' },
+  'POST  /api/v1/account/signup':                       { action: 'account/signup' },
+  'POST  /api/v1/account/send-password-recovery-email': { action: 'account/send-password-recovery-email' },
+  'POST  /api/v1/account/update-password-and-login':    { action: 'account/update-password-and-login' },
   'POST  /api/v1/deliver-contact-form-message':          { action: 'deliver-contact-form-message' },
+
+  //  JOB RESERVATION
   'POST  /api/v1/reserve-job':                              { action: 'jobReservation/create-job' },
   'POST  /api/v1/generate-job':                              { action: 'jobReservation/generate-job' },
-
   'DELETE  /api/v1/delete-job/:jobId':                   { action: 'jobReservation/delete-job' },
   
 };
