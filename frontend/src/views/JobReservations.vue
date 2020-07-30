@@ -218,7 +218,7 @@ export default {
         axios.get("/job-reservations", {withCredentials: true})
             .then(res => { 
                 this.printerQueues = res.data.printerQueues;
-                })
+            })
             .catch(err => console.log(err));
     }
 }    

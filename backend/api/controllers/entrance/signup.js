@@ -3,9 +3,7 @@ module.exports = {
 
   friendlyName: 'Signup',
 
-
   description: 'Sign up for a new user account.',
-
 
   extendedDescription:
 `This creates a new user record in the database, signs in the requesting user agent
@@ -35,11 +33,18 @@ the account verification message.)`,
       description: 'The unencrypted password to use for the new account.'
     },
 
-    fullName:  {
+    firstName:  {
       required: true,
       type: 'string',
-      example: 'Frida Kahlo de Rivera',
-      description: 'The user\'s full name.',
+      example: 'Ingvild',
+      description: 'The user\'s first name.',
+    },
+
+    lastName:  {
+      required: true,
+      type: 'string',
+      example: 'Erlinson',
+      description: 'The user\'s last name.',
     }
 
   },
@@ -53,7 +58,7 @@ the account verification message.)`,
 
     invalid: {
       responseType: 'badRequest',
-      description: 'The provided fullName, password and/or email address are invalid.',
+      description: 'The provided name, password and/or email address are invalid.',
       extendedDescription: 'If this request was sent from a graphical user interface, the request '+
       'parameters should have been validated/coerced _before_ they were sent.'
     },
@@ -75,7 +80,8 @@ the account verification message.)`,
     var newUserRecord = await User.create(_.extend({
       emailAddress: newEmailAddress,
       password: await sails.helpers.passwords.hashPassword(inputs.password),
-      fullName: inputs.fullName,
+      firstName: inputs.firstName,
+      lastName: inputs.lastName,
       tosAcceptedByIp: this.req.ip
     }, sails.config.custom.verifyEmailAddresses? {
       emailProofToken: await sails.helpers.strings.random('url-friendly'),
@@ -108,7 +114,8 @@ the account verification message.)`,
         subject: 'Please confirm your account',
         template: 'email-verify-account',
         templateData: {
-          fullName: inputs.fullName,
+          firstName: inputs.firstName,
+          lastName: inputs.lastName,
           token: newUserRecord.emailProofToken
         }
       });

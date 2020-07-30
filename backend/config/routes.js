@@ -13,22 +13,8 @@ module.exports.routes = {
   //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
   //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
   //  ╚╩╝╚═╝╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
-  
-  'GET /email/confirm':      { action: 'account/confirm-email' },
 
-  'GET /login':              { action: 'account/view-login' },
-  'GET /password/forgot':    { action: 'account/view-forgot-password' },
-  'GET /password/new':       { action: 'account/view-new-password' },
-
-  'GET /account':            { action: 'account/view-account-overview' },
-  'GET /account/password':   { action: 'account/view-edit-password' },
-  'GET /account/profile':    { action: 'account/view-edit-profile' },
-  'GET /all-job-reservation-data':    { action: 'jobReservation/get-all-jobs' },
-  'GET /job-reservations-data':    { action: 'jobReservation/get-jobs' },
-  'GET /job-reservations':    { action: 'jobReservation/view-jobs' },
-  
-  'GET /reservation-proposal/:duration':    { action: 'jobReservation/propose-jobs' },
-
+  'GET /email/confirm':      { action: 'entrance/confirm-email' },
 
   //  ╔╦╗╦╔═╗╔═╗  ╦═╗╔═╗╔╦╗╦╦═╗╔═╗╔═╗╔╦╗╔═╗   ┬   ╔╦╗╔═╗╦ ╦╔╗╔╦  ╔═╗╔═╗╔╦╗╔═╗
   //  ║║║║╚═╗║    ╠╦╝║╣  ║║║╠╦╝║╣ ║   ║ ╚═╗  ┌┼─   ║║║ ║║║║║║║║  ║ ║╠═╣ ║║╚═╗
@@ -51,16 +37,25 @@ module.exports.routes = {
   '/api/v1/account/logout':                           { action: 'account/logout' },
   'PUT   /api/v1/account/update-password':            { action: 'account/update-password' },
   'PUT   /api/v1/account/update-profile':             { action: 'account/update-profile' },
-  'PUT   /api/v1/account/update-billing-card':        { action: 'account/update-billing-card' },
-  'PUT   /api/v1/account/login':                        { action: 'acount/login' },
-  'POST  /api/v1/account/signup':                       { action: 'account/signup' },
-  'POST  /api/v1/account/send-password-recovery-email': { action: 'account/send-password-recovery-email' },
-  'POST  /api/v1/account/update-password-and-login':    { action: 'account/update-password-and-login' },
+  'PUT   /api/v1/entrance/login':                        { action: 'entrance/login' },
+  'POST  /api/v1/entrance/signup':                       { action: 'entrance/signup' },
+  'POST  /api/v1/entrance/send-password-recovery-email': { action: 'entrance/send-password-recovery-email' },
+  'POST  /api/v1/entrance/update-password-and-login':    { action: 'entrance/update-password-and-login' },
   'POST  /api/v1/deliver-contact-form-message':          { action: 'deliver-contact-form-message' },
 
-  //  JOB RESERVATION
+  //JOB RESERVATION
+  'GET /all-job-reservation-data':                          { action: 'jobReservation/get-all-jobs' },
+  'GET /job-reservations-data':                             { action: 'jobReservation/get-jobs' },
+  'GET /job-reservations':                                  { action: 'jobReservation/view-jobs' },
+  'GET /reservation-proposal/:duration':                    { action: 'jobReservation/propose-jobs' },
   'POST  /api/v1/reserve-job':                              { action: 'jobReservation/create-job' },
-  'POST  /api/v1/generate-job':                              { action: 'jobReservation/generate-job' },
-  'DELETE  /api/v1/delete-job/:jobId':                   { action: 'jobReservation/delete-job' },
-  
+  'POST  /api/v1/generate-job':                             { action: 'jobReservation/generate-job' },
+  'DELETE  /api/v1/delete-job/:jobId':                      { action: 'jobReservation/delete-job' },
+
+  //COMMITTEE
+  'POST  /committee':                                { action: 'committee/create-committee' },
+  'GET   /committees':                               { action: 'committee/get-committees' },
+  'DELETE  /committees':                             { action: 'committee/delete-committees' },
+
+
 };

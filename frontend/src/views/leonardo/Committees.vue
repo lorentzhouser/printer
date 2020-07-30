@@ -9,25 +9,35 @@
         <br>
         <br>
         <div class="box-container">
-            <a class="box box-image" v-bind:key="komite.id" v-for="komite in komiteer" href="{% url 'komite_detail' komite_slug=komite.slug %}">
-                <h4>{{ komite.name }}<img src="../../assets/img/icons/arrow.svg" alt="pil"></h4>
-                <img :src="komite.image.url" :alt="komite.name">
-            </a>
+            <!-- <router-link :to="{ name: 'CommitteeDetail', params: { slug: destination.slug }}"> -->
+                <a class="box box-image" v-bind:key="committee.id" v-for="committee in committees">
+                <h4>{{ committee.name }}<img src="../../assets/img/icons/arrow.svg" alt="pil"></h4>
+                <img :src="committee.imageURL" :alt="committee.name">
+                </a>
+            <!-- </router-link> -->
         </div>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
     name: 'Committees',
+    created() {
+        axios.get("/committees", {withCredentials: true})
+            .then(res => {
+                this.committees = res.data.committees;
+            })
+            .catch(err => console.log(err));
+    },
     data: function() {
         return {
-            komiteer: [
+            committees: [
                 {
                     id: 1,
                     name: 'name',
                     image: {
-                        url: "google.com"
+                        url: "https://www.pngitem.com/pimgs/m/461-4618525_ig-small-instagram-logo-2019-hd-png-download.png"
                     },
                     slug: 'bug',
                 },
@@ -35,7 +45,7 @@ export default {
                     id: 2,
                     name: 'name2',
                     image: {
-                        url: "google.com"
+                        url: "https://www.pngitem.com/pimgs/m/461-4618525_ig-small-instagram-logo-2019-hd-png-download.png"
                     },
                     slug: 'bug'
                 }
@@ -47,4 +57,5 @@ export default {
 
 <style lang="scss" scoped>
     @import "@/assets/css/pages/komite/_komite.scss";
+    @import "@/assets/css/components/_box.scss";
 </style>

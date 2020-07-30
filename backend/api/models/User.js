@@ -40,6 +40,11 @@ email status until they click the link in the confirmation email.`
       description: 'A still-unconfirmed email address that this user wants to change to (if relevant).'
     },
 
+    imageURL: {
+      type: 'string',
+      description: 'Profil Image',
+    },
+
     password: {
       type: 'string',
       required: true,
@@ -48,12 +53,38 @@ email status until they click the link in the confirmation email.`
       example: '2$28a8eabna301089103-13948134nad'
     },
 
-    fullName: {
+    firstName: {
       type: 'string',
       required: true,
-      description: 'Full representation of the user\'s name.',
-      maxLength: 120,
-      example: 'Mary Sue van der McHenst'
+      description: 'Just the first name',
+      maxLength: 60,
+      example: 'Ingvild'
+    },
+
+    lastName: {
+      type: 'string',
+      required: true,
+      description: 'Just the last name',
+      maxLength: 60,
+      example: 'Erlingson'
+    },
+
+    isAdmin: {
+      type: 'boolean',
+      description: 'Admin are committee leaders. Should create more specific roles eventually',
+      defaultsTo: false,
+    },
+
+    isActive: { 
+      type: 'boolean',
+      description: 'From original user model. Can be used for online status?',
+      defaultsTo: false,
+    },
+
+    graduation_year: {
+      type: 'number',
+      required: false,
+      description: 'not sure yet?'
     },
 
     isSuperAdmin: {
@@ -95,6 +126,9 @@ So, while this \`isSuperAdmin\` demarcation might not be the right approach fore
       description: 'A JS timestamp (epoch ms) representing the moment when this user\'s `emailProofToken` will expire (or 0 if the user currently has no such token).',
       example: 1502844074211
     },
+
+
+    //POTENTIAL FUTURE PAYMENT FIELDS
 
     stripeCustomerId: {
       type: 'string',
@@ -167,5 +201,8 @@ without necessarily having a billing card.`
 
   },
 
+  fullName: function() {
+    return firstName + ' ' + lastName;
+  }
 
 };

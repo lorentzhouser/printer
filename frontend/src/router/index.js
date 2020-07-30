@@ -64,6 +64,11 @@ Vue.use(VueRouter)
     name: 'Committees',
     component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/Committees.vue')
   },
+  // {
+  //   path: '/leonardo/committees/:slug',
+  //   name: 'CommitteeDetail',
+  //   component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/CommitteeDetail.vue')
+  // },
   //PROJECTS
   {
     path: '/prosjekter',
