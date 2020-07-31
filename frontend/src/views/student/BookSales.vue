@@ -50,7 +50,7 @@ export default {
                         email: 'lorentzhouser@email.com',
                     },
                     image: {
-                        url: "some url",
+                        url: "https://static.wixstatic.com/media/5e47c9_ba7a875e11eb4a9b96a6de9ddb29b1ab~mv2.jpg/v1/fill/w_1280,h_720,al_c,q_85/5e47c9_ba7a875e11eb4a9b96a6de9ddb29b1ab~mv2.webp",
                     },
                 }
             ]

@@ -57,5 +57,14 @@ module.exports.routes = {
   'GET   /committees':                               { action: 'committee/get-committees' },
   'DELETE  /committees':                             { action: 'committee/delete-committees' },
 
+  //EVENT
+  'POST  /event':                                { action: 'event/create-event' },
+  'GET   /events':                               { action: 'event/get-events' },
+  'DELETE  /events':                             { action: 'event/delete-events' },
+
+  //PROJECTS
+  'POST  /project':                                { action: 'project/create-project' },
+  'GET   /projects':                               { action: 'project/get-projects' },
+  'DELETE  /projects':                             { action: 'project/delete-projects' },
 
 };

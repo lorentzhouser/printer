@@ -31,12 +31,6 @@ module.exports = {
         description: 'path to committee icon asset'
       },
 
-    //   slug: {
-    //     type: 'string',
-    //     isEmail: true,
-    //     description: 'A still-unconfirmed email address that this user wants to change to (if relevant).'
-    //   },
-
     },
 
   };

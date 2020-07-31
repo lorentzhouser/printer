@@ -1,7 +1,7 @@
 <template>
     <div id="komite-detail" class="container nav">
-        <h1>{{ komite.name }}</h1>
-        <p class="p-width break">{{ komite.description }}</p>
+        <h1>{{ committee.name }}</h1>
+        <p class="p-width break">{{ committee.description }}</p>
     </div>
 </template>
 
@@ -10,8 +10,11 @@ export default {
     name: 'CommitteeDetail',
     data: function() {
         return {
-            slug: this.$route.params.slug
+            committee: this.$route.params.committee
         }
+    },
+    mounted() {
+        window.scrollTo(0, 0)
     }
 }
 </script>

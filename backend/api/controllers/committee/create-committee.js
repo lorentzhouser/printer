@@ -73,7 +73,7 @@ module.exports = {
             sails.log.warn('File Upload Fail');
             Committee.create({ name: inputs.name, description: inputs.description, imageURL: '' })
             .then(() => {
-                return exits.success('sucessfully created');
+                return exits.successWithoutImage('sucessfully created');
             })
             .catch(() => {
                 return exits.serverError('could not create committee');

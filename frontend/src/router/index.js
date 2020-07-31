@@ -62,13 +62,13 @@ Vue.use(VueRouter)
   {
     path: '/leonardo/committees',
     name: 'Committees',
-    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/Committees.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/committee/Committees.vue')
   },
-  // {
-  //   path: '/leonardo/committees/:slug',
-  //   name: 'CommitteeDetail',
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/CommitteeDetail.vue')
-  // },
+  {
+    path: '/leonardo/committees/:committee',
+    name: 'CommitteeDetail',
+    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/committee/CommitteeDetail.vue')
+  },
   //PROJECTS
   {
     path: '/prosjekter',
@@ -79,7 +79,12 @@ Vue.use(VueRouter)
   {
     path: '/arrangementer',
     name: 'Events',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Events.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/event/Events.vue')
+  },
+  {
+    path: '/arrangementer/:title',
+    name: 'EventDetail',
+    component: () => import(/* webpackChunkName: "about" */ '../views/event/EventDetail.vue')
   },
   //PRINT
   {

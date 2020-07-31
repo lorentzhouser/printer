@@ -9,12 +9,12 @@
         <br>
         <br>
         <div class="box-container">
-            <!-- <router-link :to="{ name: 'CommitteeDetail', params: { slug: destination.slug }}"> -->
-                <a class="box box-image" v-bind:key="committee.id" v-for="committee in committees">
-                <h4>{{ committee.name }}<img src="../../assets/img/icons/arrow.svg" alt="pil"></h4>
+            <router-link v-bind:key="committee.id" v-for="committee in committees" :to="{ name: 'CommitteeDetail', params: { committee: committee }}">
+                <a class="box box-image">
+                <h4>{{ committee.name }}<img src="../../../assets/img/icons/arrow.svg" alt="pil"></h4>
                 <img :src="committee.imageURL" :alt="committee.name">
                 </a>
-            <!-- </router-link> -->
+            </router-link>
         </div>
     </div>
 </template>

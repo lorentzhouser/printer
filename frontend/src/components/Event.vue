@@ -6,7 +6,7 @@
         <h3>{{ event.title }}</h3>
     </div>
     <div class="image-container">
-        <img :src="event.thumbnail.url" :alt="event.short_description">
+        <img :src="event.thumbnailURL" :alt="event.short_description">
     </div>
     </a>
     </div>

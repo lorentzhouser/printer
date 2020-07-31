@@ -14,17 +14,29 @@ const store = new Vuex.Store({
     user: {
       first_name: "lorentz",
       last_name: "houser",
-      authenticated: false,
+      authenticated: true,
       allergies: [],
       graduation_year: 2010,
       komite: "my committee",
       committees: ["committee1", "committee2"],
       my_books: ["link", "link2"]
     },
+    events: [],
   },
   getters: {
     is_authenticated (state) {
       return state.user.authenticated
+    }
+  },
+  actions: {
+    loadEvents({commit}) {
+      axios
+        .get("/events", {withCredentials: true})
+        .then(res => { 
+          console.log(res.data); 
+          commit('setEvents', res.data.events);
+        })
+        .catch(error => {console.log(error)});
     }
   },
   mutations: {
@@ -33,6 +45,9 @@ const store = new Vuex.Store({
     },
     logout (state) {
       state.authenticated = false;
+    },
+    setEvents (state, events) {
+      state.events = events;
     }
   }
 })

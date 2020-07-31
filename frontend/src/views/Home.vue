@@ -34,139 +34,46 @@
 
 <script>
 import Event from '../components/Event.vue'
+import {mapState} from 'vuex'
 
 export default {
   name: 'Home',
   components: {
     Event,
   },
+  created() {
+    this.$store.dispatch('loadEvents');
+  },
+  computed: {
+    ...mapState([
+      'events'
+    ])
+  },
   data: function() {
     return {
-      events: [
-        {
-          id: 1,
-          title: 'event',
-          slug: 'link',
-          short_description: 'short desc',
-          description: 'description',
-          location: 'just a location',
-          event_start_time: 'start time date',
-          event_end_time: 'should be a end time date',
-          registration_required: false,
-          registration_start_time: '12:00',
-          alumni: true,
-          class_1 : false,
-          class_2 : false,
-          class_3 : false,
-          class_4 : false,
-          class_5 : false,
-          only_komite : false,
-          available_spots : true,
-          registered_users : false,
-          waiting_list : ["me", "you", "dupree"],
-          image : "../assets/dev_images/images/Immen_thornielsen_rektor_09oyYIG.jpg",
-          thumbnail : {
-            url: "http://localhost:8080/assets/img/Logo/Inverse.svg",
-            img: "img",
-          },
-        },
-        {
-          id: 2,
-          title: 'event2',
-          slug: 'link',
-          short_description: 'short desc',
-          description: 'description',
-          location: 'just a location',
-          event_start_time: 'start time date',
-          event_end_time: 'should be a end time date',
-          registration_required: false,
-          registration_start_time: '12:00',
-          alumni: true,
-          class_1 : false,
-          class_2 : false,
-          class_3 : false,
-          class_4 : false,
-          class_5 : false,
-          only_komite : false,
-          available_spots : true,
-          registered_users : false,
-          waiting_list : ["me", "you", "dupree"],
-          image : "img_url",
-          thumbnail : "thumbnail_url",
-        },
-        {
-          id: 3,
-          title: 'event3',
-          slug: 'link',
-          short_description: 'short desc',
-          description: 'description',
-          location: 'just a location',
-          event_start_time: 'start time date',
-          event_end_time: 'should be a end time date',
-          registration_required: false,
-          registration_start_time: '12:00',
-          alumni: true,
-          class_1 : false,
-          class_2 : false,
-          class_3 : false,
-          class_4 : false,
-          class_5 : false,
-          only_komite : false,
-          available_spots : true,
-          registered_users : false,
-          waiting_list : ["me", "you", "dupree"],
-          image : "img_url",
-          thumbnail : "thumbnail_url",
-        },
-        {
-          id: 4,
-          title: 'event4',
-          slug: 'link',
-          short_description: 'short desc',
-          description: 'description',
-          location: 'just a location',
-          event_start_time: 'start time date',
-          event_end_time: 'should be a end time date',
-          registration_required: false,
-          registration_start_time: '12:00',
-          alumni: true,
-          class_1 : false,
-          class_2 : false,
-          class_3 : false,
-          class_4 : false,
-          class_5 : false,
-          only_komite : false,
-          available_spots : true,
-          registered_users : false,
-          waiting_list : ["me", "you", "dupree"],
-          image : "img_url",
-          thumbnail : "thumbnail_url",
-        }
-
-      ],
       projects: [
         {
           id: 1,
           pk: "project_pk",
-          projectimage_set: ["../assets/dev_images/thumbnails/project.jpg", "url2","url3..."],
+          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
           creator: "author"
         },
         {
           id: 2,
           pk: "project_pk",
-          projectimage_set: ["url1", "url2","url3..."],
+          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
           creator: "author"
         },
         {
           id: 3,
           pk: "project_pk",
-          projectimage_set: ["url1", "url2","url3..."],
+          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
           creator: "author"
         }
         ,{
           id: 4,
           pk: "project_pk",
-          projectimage_set: ["url1", "url2","url3..."],
+          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
           creator: "author"
         }
       ]

@@ -16,6 +16,7 @@ module.exports.policies = {
   'entrance/*': true,
   'account/logout': true,
   'committee/*': true,
+  'event/*': true,
   // 'view-homepage-or-redirect': true,
   // 'view-faq': true,
   // 'view-contact': true,
