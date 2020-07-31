@@ -1,10 +1,8 @@
 module.exports = {
 
-    friendlyName: 'Create New Project',
+    friendlyName: 'Update Project',
   
-    description: 'Create New Project',
-
-    files: ['imageFile'],
+    description: 'Update project after file upload and save',
 
     inputs: {
   
@@ -22,12 +20,6 @@ module.exports = {
             description: 'Description of the event',
         },
 
-        projectImages: {
-            type: 'ref',
-            collection: 'projectimage',
-            via: 'project'
-        },
-
         classYear: {
             type: 'string',
             allowNull: true,
@@ -43,11 +35,6 @@ module.exports = {
             maxLength: 150, 
         },
 
-        imageFile: {
-          type: 'ref',
-          required: false,
-          description: 'Image file',
-        },
     },
   
   

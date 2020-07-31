@@ -17,7 +17,7 @@ module.exports = {
   
     fn: async function () {
 
-        const projects = await Project.find();
+        const projects = await Project.find().populate('images');
         return { projects: projects };
         
     }

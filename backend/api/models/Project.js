@@ -7,11 +7,11 @@
 
 module.exports = {
 
+    primaryKey: 'id',
+
+    cascadeOnDestroy: true,
+
     attributes: {
-  
-      //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
-      //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
-      //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
   
         creator: {
             type: 'string',
@@ -27,7 +27,7 @@ module.exports = {
             description: 'Description of the event',
         },
 
-        projectImages: {
+        images: {
             collection: 'projectimage',
             via: 'project'
         },
@@ -47,5 +47,6 @@ module.exports = {
             maxLength: 150, 
         },
     },
+    
   };
   

@@ -8,11 +8,7 @@
 module.exports = {
 
     attributes: {
-  
-      //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
-      //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
-      //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
-  
+
         name: {
             type: 'string',
             required: false,
@@ -21,7 +17,8 @@ module.exports = {
         },
 
         project: {
-            model: 'project'
+            model: 'project',
+            // required: true
         },
         
         imageURL: {
