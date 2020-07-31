@@ -5,6 +5,11 @@ module.exports = {
     description: 'Update project after file upload and save',
 
     inputs: {
+
+        id: { 
+            type: 'ref',
+            required: true,
+        },
   
         creator: {
             type: 'string',
@@ -68,8 +73,15 @@ module.exports = {
     },
   
     fn: async function (inputs, exits) {
-        const project = await Project.create({}).fetch();
-        return exits.successWithoutData(project.id);
+        var updatedProject = await Project.update({id: inputs.id})
+        .set({
+          creator: inputs.creator,
+          description: inputs.description,
+          classYear: inputs.classYear,
+          course: inputs.course,
+        })
+        .fetch();
+        return exits.success(updatedProject);
     },
   };
   

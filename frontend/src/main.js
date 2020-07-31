@@ -22,6 +22,7 @@ const store = new Vuex.Store({
       my_books: ["link", "link2"]
     },
     events: [],
+    projects: []
   },
   getters: {
     is_authenticated (state) {
@@ -37,7 +38,16 @@ const store = new Vuex.Store({
           commit('setEvents', res.data.events);
         })
         .catch(error => {console.log(error)});
-    }
+    },
+    loadProjects({commit}) {
+      axios
+        .get("/projects", {withCredentials: true})
+        .then(res => { 
+          console.log(res.data); 
+          commit('setProjects', res.data.projects);
+        })
+        .catch(error => {console.log(error)});
+    },
   },
   mutations: {
     login (state) {
@@ -48,7 +58,10 @@ const store = new Vuex.Store({
     },
     setEvents (state, events) {
       state.events = events;
-    }
+    },
+    setProjects (state, projects) {
+      state.projects = projects;
+    },
   }
 })
 

@@ -2,55 +2,12 @@ module.exports = {
 
     friendlyName: 'Create New Project',
   
-    description: 'Create New Project',
-
-    files: ['imageFile'],
+    description: 'Obtain a project identifier for saving images and later updating (PUT) with models fields',
 
     inputs: {
   
-        creator: {
-            type: 'string',
-            required: false,
-            allowNull: true,
-            maxLength: 300,
-        },
-
-        description: {
-            type: 'string',
-            allowNull: true,
-            required: false,
-            description: 'Description of the event',
-        },
-
-        projectImages: {
-            type: 'ref',
-            collection: 'projectimage',
-            via: 'project'
-        },
-
-        classYear: {
-            type: 'string',
-            allowNull: true,
-            required: false,
-            isIn: ['1. klasse', '2. klasse', '3. klasse', '4. klasse','5. klasse'],
-            maxLength: 10, 
-        },
-
-        course: {
-            type: 'string',
-            allowNull: true,
-            required: false,
-            maxLength: 150, 
-        },
-
-        imageFile: {
-          type: 'ref',
-          required: false,
-          description: 'Image file',
-        },
     },
-  
-  
+
     exits: {
   
       success: {
@@ -58,7 +15,7 @@ module.exports = {
       },
 
       successWithoutData: {
-          description: 'New event created successfully. Failed image upload.'
+          description: 'New event created successfully.'
       },
   
       invalid: {
@@ -82,7 +39,7 @@ module.exports = {
   
     fn: async function (inputs, exits) {
         const project = await Project.create({}).fetch();
-        return exits.successWithoutData(project.id);
+        return exits.success(project.id);
     },
   };
   

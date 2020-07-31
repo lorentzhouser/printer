@@ -21,7 +21,7 @@
             <div class="projects box-container">
                 <div v-bind:key="project.id" v-for="project in projects">
                   <a class="box" href="{% url 'project_detail' project_pk=project.pk %}">
-                      <img class="" :src="project.projectimage_set[0]" :alt="project.creator">
+                      <img class="" :src="project.images[0].imageURL" :alt="project.images[0].name">
                   </a>
                 </div>
             </div>
@@ -43,40 +43,16 @@ export default {
   },
   created() {
     this.$store.dispatch('loadEvents');
+    this.$store.dispatch('loadProjects');
   },
   computed: {
     ...mapState([
-      'events'
+      'events',
+      'projects'
     ])
   },
   data: function() {
     return {
-      projects: [
-        {
-          id: 1,
-          pk: "project_pk",
-          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
-          creator: "author"
-        },
-        {
-          id: 2,
-          pk: "project_pk",
-          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
-          creator: "author"
-        },
-        {
-          id: 3,
-          pk: "project_pk",
-          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
-          creator: "author"
-        }
-        ,{
-          id: 4,
-          pk: "project_pk",
-          projectimage_set: ["https://image.freepik.com/free-photo/image-human-brain_99433-298.jpg"],
-          creator: "author"
-        }
-      ]
     }
   }
 }

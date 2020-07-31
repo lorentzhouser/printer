@@ -63,8 +63,8 @@ module.exports.routes = {
   'DELETE  /events':                                        { action: 'event/delete-events' },
 
   //PROJECTS
-  'POST    /project':                                       { action: 'project/update-project' },
-  'PUT     /project':                                       { action: 'project/create-project' },
+  'POST    /project':                                       { action: 'project/create-project' },
+  'PUT     /project':                                       { action: 'project/update-project' },
   'GET     /projects':                                      { action: 'project/get-projects' },
   'DELETE  /projects':                                      { action: 'project/delete-projects' },
 

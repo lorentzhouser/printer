@@ -73,7 +73,12 @@ Vue.use(VueRouter)
   {
     path: '/prosjekter',
     name: 'Projects',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Projects.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/project/Projects.vue')
+  },
+  {
+    path: '/prosjekter/create',
+    name: 'CreateProject',
+    component: () => import(/* webpackChunkName: "about" */ '../views/project/CreateProject.vue')
   },
   //EVENTS
   {

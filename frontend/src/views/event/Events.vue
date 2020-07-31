@@ -2,7 +2,7 @@
     <div id="all-events" class="container nav">
         <header>
             <h1>Arrangementer</h1>
-            <div v-if=is_authenticated>
+            <div v-if="is_authenticated">
                 <a class="button" href="/admin/events/event/add/"><span>Nytt arrangment</span></a>
                 <br><br>
             </div>
@@ -20,6 +20,7 @@
 <script>
 import Event from '../../components/Event.vue'
 import {mapState} from 'vuex'
+import {mapGetters} from 'vuex'
 export default {
     name: "Events",
     components: {
@@ -35,11 +36,11 @@ export default {
         this.$store.dispatch('loadEvents');
     },
     computed: {
-        is_authenticated: function() {
-            return this.$store.getters.is_authenticated;
-        },
         ...mapState([
-            'events'
+            'events',
+        ]),
+        ...mapGetters([
+            'is_authenticated',
         ])
     }
 }
