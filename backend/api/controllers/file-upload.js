@@ -8,6 +8,8 @@ module.exports = {
                 if (err) {
                     return reject(err)
                 }
+                //try catch?
+                console.log('filesUploaded.length: ' + filesUploaded.length);
                 const fullImageDirectory = filesUploaded[0].fd;
                 fullImageDirectoryElements = fullImageDirectory.split('/');
                 const fileName = fullImageDirectoryElements[fullImageDirectoryElements.length-1];

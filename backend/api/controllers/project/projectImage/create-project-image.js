@@ -24,7 +24,7 @@ module.exports = {
         
         imageFile: {
             type: 'ref',
-            required: false,
+            required: true,
             description: 'Image file',
         },
 
@@ -56,8 +56,11 @@ module.exports = {
 
     },
   
-    fn: async function (inputs, exits) {
-        
+    fn: async function (inputs, exits) {        
+        // if (!inputs.imageFile.files) {
+        //   return exits.noRecordings('no file');
+        // }
+
         fileUpload.upload(inputs.imageFile, "/images/projects", 10000000)
         .then((imageDirectory) => {
             ProjectImage.create({ 
@@ -76,7 +79,6 @@ module.exports = {
         .catch((err) => { 
             return exits.serverError("File upload failure!");
         })
-
     },
   };
   

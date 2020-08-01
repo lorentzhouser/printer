@@ -11,11 +11,11 @@ module.exports = {
     exits: {
   
       success: {
-        description: 'New event created successfully.'
+        description: 'New project created successfully.'
       },
 
       successWithoutData: {
-          description: 'New event created successfully.'
+          description: 'New project created successfully.'
       },
   
       invalid: {

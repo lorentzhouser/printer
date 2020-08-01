@@ -18,6 +18,9 @@ module.exports = {
     fn: async function () {
 
         const projects = await Project.find().populate('images');
+        const projectsWithImage = projects.filter(project => {
+          return project.images.length > 0;
+        });
         return { projects: projects };
         
     }

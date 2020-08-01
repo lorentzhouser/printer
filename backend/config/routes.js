@@ -65,6 +65,7 @@ module.exports.routes = {
   //PROJECTS
   'POST    /project':                                       { action: 'project/create-project' },
   'PUT     /project':                                       { action: 'project/update-project' },
+  'DELETE  /project':                                       { action: 'project/delete-project' },
   'GET     /projects':                                      { action: 'project/get-projects' },
   'DELETE  /projects':                                      { action: 'project/delete-projects' },
 

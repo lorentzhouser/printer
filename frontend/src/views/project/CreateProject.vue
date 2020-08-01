@@ -36,10 +36,12 @@
     <br>
     <div class="dropzone-previews"></div>
     <br>
-    <form id="dropzone" action="upload_project_image" method="post" enctype="multipart/form-data"
-        class="dropzone">
-        <!-- {% csrf_token %} -->
-    </form>
+    <vue-dropzone ref="myVueDropzone" id="dropzone" class="dropzone" :options="dropzoneOptions" 
+        v-on:vdropzone-sending="sendingFile"
+        v-on:vdropzone-file-added="fileAdded"
+        v-on:vdropzone-complete="uploadComplete"
+        >
+    </vue-dropzone>
     <br>
     <br>
     <br>
@@ -51,17 +53,33 @@
 
 <script>
 import axios from 'axios'
+import vue2Dropzone from 'vue2-dropzone'
 
 export default {
     name: "CreateProject",
+    components: {
+        vueDropzone: vue2Dropzone
+    },
     data: function() {
         return {
+            saved: false,
             description: '',
             creator: '',
-            course: '',
+            course: 'hard coursed',
             class_year: '',
             project_pk: null,
-            errors: []
+            errors: [], 
+            dropzoneOptions: {
+                // previewTemplate: document.querySelector('#preview-template').innerHTML,
+                // previewTemplate: document.querySelector('#preview-template').innerHTML,
+                url: 'http://localhost:1337/project-image',
+                withCredentials: true,
+                thumbnailWidth: 60,
+                thumbnailHeight: 60,
+                maxFiles: 10,
+                maxFileSize: 10,
+                // headers: { "My-Awesome-Header": "header value" }
+            }
         }
     },
     mounted() {
@@ -73,6 +91,17 @@ export default {
             .catch(error => {console.log(error)});
     },
     methods: {
+        fileAdded: function() {
+            console.log('file added');
+        },
+        sendingFile: function(file, xhr, formData) {
+            formData.append('name', file.name);
+            formData.append('project', this.project_pk);
+            formData.append('imageFile', file);
+        },
+        uploadComplete: function(res) {
+            console.log('uploaded ' + res);
+        },
         checkForm: function() {
             this.errors = [];
             // this.course = courseSelector.value;
@@ -83,10 +112,11 @@ export default {
             if (!this.project_pk) this.errors.push('Du må laste opp minst ett bilde');
 
             !this.errors.length && this.project_pk !== null ? this.saveProject() : null;
+            return (this.errors.length != 0)
             // this.errors.length && this.project_pk ? this.saveProject() : null;
         },
         saveProject: function() {
-            const data = {
+            const values = {
                 'id': this.project_pk,
                 'creator': this.creator,
                 'description': this.description,
@@ -94,15 +124,47 @@ export default {
                 'course': this.course,
             };
             axios
-                .put('/project', data)
+                .put('/project', {withCredentials: true, data: values})
                 .then(res => {
+                    this.saved = true;
                     console.log('result after change project: ' + res);
-                    // window.onbeforeunload = () => {};
-                    // window.location.href = "{% url 'projects' %}";
                 })
-                .catch((err) => console.log('axios put error: ' + err));
+                .catch((err) => {
+                    this.saved = false;
+                    console.log('axios put error: ' + err)
+                });
+        },
+        deleteProject: function() {
+            if (this.project_pk == null) { return; }
+            axios
+                .delete('/project', {withCredentials: true, data: { 'id': this.project_pk }})
+                .then(res => {
+                    console.log('deleted project: ' + res);
+                })
+                .catch((err) => console.log('axios delete error: ' + err));
         }
     },
+    beforeRouteLeave (to, from , next) {
+        //check data
+        if(this.saved) {
+            next();
+        }
+        else if (this.checkForm()) {
+            this.deleteProject();
+            next();
+        }
+        else {
+            const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+            if (answer) {
+                //delete images and project
+                this.deleteProject();
+                next()
+                
+            } else {
+                next(false)
+            }
+        }
+    }
 }
 
 </script>

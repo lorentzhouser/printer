@@ -18,7 +18,7 @@
             </div>
             <br>
             <a href="all_events" class="subtitle1 right">Se flere arrangementer <img src="../assets/img/icons/arrow.svg" alt="pil" /></a>
-            <div class="projects box-container">
+            <div v-if="projectsExist" class="projects box-container">
                 <div v-bind:key="project.id" v-for="project in projects">
                   <a class="box" href="{% url 'project_detail' project_pk=project.pk %}">
                       <img class="" :src="project.images[0].imageURL" :alt="project.images[0].name">
@@ -46,6 +46,9 @@ export default {
     this.$store.dispatch('loadProjects');
   },
   computed: {
+    projectsExist: function() {
+      return this.projects.length > 0;
+    },
     ...mapState([
       'events',
       'projects'
