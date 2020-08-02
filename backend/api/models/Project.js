@@ -13,6 +13,11 @@ module.exports = {
 
     attributes: {
   
+        owner: { 
+            model: 'user',
+            required: true,
+        },
+
         creator: {
             type: 'string',
             required: false,

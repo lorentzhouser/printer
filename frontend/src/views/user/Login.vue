@@ -42,7 +42,7 @@ export default {
                 rememberMe: true,
             })
             .then((response) => {
-            console.log(response);
+            console.log(response.data.token);
             }, (error) => {
             console.log(error);
             });

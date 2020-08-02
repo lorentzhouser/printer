@@ -43,6 +43,9 @@ module.exports.routes = {
   'POST  /api/v1/entrance/update-password-and-login':    { action: 'entrance/update-password-and-login' },
   'POST  /api/v1/deliver-contact-form-message':          { action: 'deliver-contact-form-message' },
 
+  //USERS
+  'GET /users':                                             { action: 'user/get-users' },
+
   //JOB RESERVATION
   'GET /all-job-reservation-data':                          { action: 'jobReservation/get-all-jobs' },
   'GET /job-reservations-data':                             { action: 'jobReservation/get-jobs' },

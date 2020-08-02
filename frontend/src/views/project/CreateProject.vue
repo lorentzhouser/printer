@@ -38,15 +38,18 @@
     <br>
     <vue-dropzone ref="myVueDropzone" id="dropzone" class="dropzone" :options="dropzoneOptions" 
         v-on:vdropzone-sending="sendingFile"
-        v-on:vdropzone-file-added="fileAdded"
+        v-on:vdropzone-queue-complete="queueComplete"
+        v-on:vdropzone-files-added="filesAdded"
         v-on:vdropzone-complete="uploadComplete"
+        v-on:vdropzone-success="uploadSuccess"
+        v-on:vdropzone-canceled="uploadCancelled"
         >
     </vue-dropzone>
     <br>
     <br>
     <br>
     <br>
-    <button @click="checkForm" class="button"><span>Legg ut prosjektet</span></button>
+    <button @click="checkForm" :disabled="!ready" class="button" id="saveButton"><span>Legg ut prosjektet</span></button>
     <br> 
     </div>
 </template>
@@ -62,6 +65,7 @@ export default {
     },
     data: function() {
         return {
+            ready: false,
             saved: false,
             description: '',
             creator: '',
@@ -70,8 +74,6 @@ export default {
             project_pk: null,
             errors: [], 
             dropzoneOptions: {
-                // previewTemplate: document.querySelector('#preview-template').innerHTML,
-                // previewTemplate: document.querySelector('#preview-template').innerHTML,
                 url: 'http://localhost:1337/project-image',
                 withCredentials: true,
                 thumbnailWidth: 60,
@@ -83,25 +85,43 @@ export default {
         }
     },
     mounted() {
+        const saveButton = document.getElementById("saveButton");
+        saveButton.disable = true;
         axios
-            .post("/project", {withCredentials: true})
+            .post("/project", {withCredentials: true, 'owner': this.$store.state.user.userId })
             .then(res => {
                 this.project_pk = res.data;
             })
             .catch(error => {console.log(error)});
     },
     methods: {
-        fileAdded: function() {
-            console.log('file added');
+        // fileAdded: function() {
+        //     this.ready = false;
+        //     console.log('file added');
+        // },
+        filesAdded: function(files) {
+            console.log('files added ' + files);
+            this.ready = false;
         },
         sendingFile: function(file, xhr, formData) {
             formData.append('name', file.name);
             formData.append('project', this.project_pk);
             formData.append('imageFile', file);
         },
-        uploadComplete: function(res) {
-            console.log('uploaded ' + res);
+        uploadCancelled: function(file) {
+            console.log('cancelled: ' + file);
         },
+        uploadComplete: function(response) {
+            console.log('response: ' + response);
+        },
+        uploadSuccess: function(file, response) {
+            //for deleting uploads in future version
+            console.log(file);
+            console.log(response);
+        },
+        queueComplete: function() {
+            this.ready = true;
+        },  
         checkForm: function() {
             this.errors = [];
             // this.course = courseSelector.value;
@@ -116,7 +136,7 @@ export default {
             // this.errors.length && this.project_pk ? this.saveProject() : null;
         },
         saveProject: function() {
-            const values = {
+            const data = {
                 'id': this.project_pk,
                 'creator': this.creator,
                 'description': this.description,
@@ -124,10 +144,10 @@ export default {
                 'course': this.course,
             };
             axios
-                .put('/project', {withCredentials: true, data: values})
-                .then(res => {
+                .put('/project', data)
+                .then(() => {
                     this.saved = true;
-                    console.log('result after change project: ' + res);
+                    this.$router.push('prosjekter');
                 })
                 .catch((err) => {
                     this.saved = false;

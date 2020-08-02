@@ -64,12 +64,17 @@ and exposed as \`req.me\`.)`
       // To customize the response for _only this_ action, replace `responseType` with
       // something else.  For example, you might set `statusCode: 498` and change the
       // implementation below accordingly (see http://sailsjs.com/docs/concepts/controllers).
-    }
+    },
+
+    forbidden: {
+      description: `Forbidden means some server error I believe`,
+      responseType: 'Forbidden'
+    },
 
   },
 
 
-  fn: async function (inputs) {
+  fn: async function (inputs, exits) {
 
     // Look up by the email address.
     // (note that we lowercase it to ensure the lookup is always case-insensitive,
@@ -84,31 +89,60 @@ and exposed as \`req.me\`.)`
     }
 
     // If the password doesn't match, then also exit thru "badCombo".
-    await sails.helpers.passwords.checkPassword(inputs.password, userRecord.password)
-    .intercept('incorrect', 'badCombo');
+    User.verifyPassword(inputs.password)
+    .then((valid) => {
+      if (valid) {
+        
+        res.json({user: User, token: sails.services.tokenauth.generateToken({userId: User.id})});
 
-    // If "Remember Me" was enabled, then keep the session alive for
-    // a longer amount of time.  (This causes an updated "Set Cookie"
-    // response header to be sent as the result of this request -- thus
-    // we must be dealing with a traditional HTTP request in order for
-    // this to work.)
-    if (inputs.rememberMe) {
-      if (this.req.isSocket) {
-        sails.log.warn(
-          'Received `rememberMe: true` from a virtual request, but it was ignored\n'+
-          'because a browser\'s session cookie cannot be reset over sockets.\n'+
-          'Please use a traditional HTTP request instead.'
-        );
-      } else {
-        this.req.session.cookie.maxAge = sails.config.custom.rememberMeCookieMaxAge;
+        if (inputs.rememberMe) {
+          if (this.req.isSocket) {
+            sails.log.warn(
+              'Received `rememberMe: true` from a virtual request, but it was ignored\n'+
+              'because a browser\'s session cookie cannot be reset over sockets.\n'+
+              'Please use a traditional HTTP request instead.'
+            );
+            // this.req.socket.User = User;
+          } else {
+            this.req.session.cookie.maxAge = sails.config.custom.rememberMeCookieMaxAge;
+          }
+        }
+        
+
       }
-    }//ﬁ
+      else {
+        return exits.badCombo();
+      }
+    })
+    .catch(err => {
+      return exits.forbidden();
+    })
+  },
+  authSocket: function(inputs) {
+    const req = this.req;
+    if(!req.isSocket) {
+      return res.json(400, 'This route is for socket connections only');
+    }
 
-    // Modify the active session instance.
-    // (This will be persisted when the response is sent.)
-    this.req.session.userId = userRecord.id;
-    console.log(userRecord.firstName);
-    console.log(this.req.session.userId);
+    var token = req.param('token');
+    if(!token) return res.json(401, 'token missing');
+
+    sails.services.tokenauth.getUser(token, function(err, User) {
+      if(err || !User) {
+        return res.json(401, 'token invalid');
+      }
+      req.socket.User = User;
+      res.json(200, User.toJSON());
+    });
+  },
+
+  deauthSocket: function(inputs) {
+    const req = this.req;
+    if(!req.isSocket) {
+      return res.json(400, 'This route is for socket connections only');
+    }
+
+    delete req.socket.User;
+    res.json(200, 'ok');
   }
-
 };

@@ -7,7 +7,7 @@ module.exports = {
     inputs: {
 
         id: { 
-            type: 'ref',
+            type: 'string',
             required: true,
         },
   
@@ -73,6 +73,7 @@ module.exports = {
     },
   
     fn: async function (inputs, exits) {
+      console.log('UPDATE FUNCTION CALLED');
         var updatedProject = await Project.update({id: inputs.id})
         .set({
           creator: inputs.creator,

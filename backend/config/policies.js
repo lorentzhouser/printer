@@ -18,6 +18,7 @@ module.exports.policies = {
   'committee/*': true,
   'event/*': true,
   'project/*': true,
+  'user/*': true,
   //need to validate is-logged-in policy
 
   // 'view-homepage-or-redirect': true,

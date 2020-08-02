@@ -12,6 +12,7 @@ axios.defaults.baseURL = 'http://localhost:1337/';
 const store = new Vuex.Store({
   state: {
     user: {
+      userId: '1',
       first_name: "lorentz",
       last_name: "houser",
       authenticated: true,
@@ -41,7 +42,7 @@ const store = new Vuex.Store({
     },
     loadProjects({commit}) {
       axios
-        .get("/projects", {withCredentials: true})
+        .get("/projects", {withCredentials : true})
         .then(res => { 
           console.log(res.data); 
           commit('setProjects', res.data.projects);

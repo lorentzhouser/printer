@@ -5,7 +5,10 @@ module.exports = {
     description: 'Obtain a project identifier for saving images and later updating (PUT) with models fields',
 
     inputs: {
-  
+      owner: {
+        type: 'ref',
+        required: true,
+      }
     },
 
     exits: {
@@ -38,7 +41,10 @@ module.exports = {
     },
   
     fn: async function (inputs, exits) {
-        const project = await Project.create({}).fetch();
+        console.log('inputs owner: ' + inputs.owner);
+        const project = await Project.create({
+          owner: inputs.owner
+        }).fetch();
         return exits.success(project.id);
     },
   };
