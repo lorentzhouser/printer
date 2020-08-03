@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken')
+const tokenauth = require('../services/tokenauth')
 
 module.exports = {
   friendlyName: 'Verify JWT',
@@ -31,15 +32,19 @@ module.exports = {
       // if there's nothing after "Bearer", no go
       if (!token) return exits.invalid()
       // if there is something, attempt to parse it as a JWT token
-      return jwt.verify(token, process.env.JWT_KEY, async function (err, payload) {
-        if (err || !payload.sub) return exits.invalid()
-        var user = await User.findOne(payload.sub)
-        if (!user) return exits.invalid()
-        // if it got this far, everything checks out, success
-        req.user = user
-        return exits.success(user)
-      })
+      
+      tokenauth.getUser(token, function(err, user) {
+        if (err != null) {
+          return exits.invalid();
+        }
+        else {
+          return exits.success();
+        }
+      });
+
     }
-    return exits.invalid()
+    else {
+      return exits.invalid();
+    }
   }
 }

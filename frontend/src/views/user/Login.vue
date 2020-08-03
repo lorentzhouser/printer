@@ -19,7 +19,7 @@
 
 <script>
 // import { mapGetters } from 'vuex'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
     name: "Login",
     data: function() {
@@ -35,17 +35,12 @@ export default {
     },
     methods: {
         login: function() {
-            console.log(this.email + " " + this.password);
-            axios.put('/api/v1/entrance/login', {
-                emailAddress: 'lorentzhouser@me.com',
+            const reqData = {
+                emailAddress: 'stine@me.com',
                 password: '1234',
                 rememberMe: true,
-            })
-            .then((response) => {
-            console.log(response.data.token);
-            }, (error) => {
-            console.log(error);
-            });
+            };
+            this.$store.dispatch('login', reqData);
         }
     }
 }

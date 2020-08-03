@@ -1,3 +1,5 @@
+var bcrypt = require('bcrypt');
+
 module.exports = {
     index: function(req, res) {
   

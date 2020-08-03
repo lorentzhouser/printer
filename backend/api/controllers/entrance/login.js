@@ -1,3 +1,4 @@
+var bcrypt = require('bcrypt');
 module.exports = {
 
 
@@ -89,12 +90,10 @@ and exposed as \`req.me\`.)`
     }
 
     // If the password doesn't match, then also exit thru "badCombo".
-    User.verifyPassword(inputs.password)
+    bcrypt.compare(inputs.password, userRecord.password) 
     .then((valid) => {
       if (valid) {
         
-        res.json({user: User, token: sails.services.tokenauth.generateToken({userId: User.id})});
-
         if (inputs.rememberMe) {
           if (this.req.isSocket) {
             sails.log.warn(
@@ -107,42 +106,51 @@ and exposed as \`req.me\`.)`
             this.req.session.cookie.maxAge = sails.config.custom.rememberMeCookieMaxAge;
           }
         }
-        
+        console.log('login');
+        const payload = {
+          'userId': userRecord.id,
+          'emailAddress': userRecord.emailAddress,
+          'emailStatus': userRecord.emailStatus,
+          'imageURL': userRecord.imageURL,
+          'firstName': userRecord.firstName,
 
+          //...and other values of interest. Is this necessary?
+        };
+        return exits.success({user: userRecord, token: tokenauth.generateToken(payload)});
       }
       else {
-        return exits.badCombo();
+        return exits.badCombo('passwords do not match');
       }
     })
     .catch(err => {
-      return exits.forbidden();
+      return exits.badCombo('error in compare method');
     })
   },
-  authSocket: function(inputs) {
-    const req = this.req;
-    if(!req.isSocket) {
-      return res.json(400, 'This route is for socket connections only');
-    }
+  // authSocket: function(inputs) {
+  //   const req = this.req;
+  //   if(!req.isSocket) {
+  //     return res.json(400, 'This route is for socket connections only');
+  //   }
 
-    var token = req.param('token');
-    if(!token) return res.json(401, 'token missing');
+  //   var token = req.param('token');
+  //   if(!token) return res.json(401, 'token missing');
 
-    sails.services.tokenauth.getUser(token, function(err, User) {
-      if(err || !User) {
-        return res.json(401, 'token invalid');
-      }
-      req.socket.User = User;
-      res.json(200, User.toJSON());
-    });
-  },
+  //   sails.services.tokenauth.getUser(token, function(err, User) {
+  //     if(err || !User) {
+  //       return res.json(401, 'token invalid');
+  //     }
+  //     req.socket.User = User;
+  //     res.json(200, User.toJSON());
+  //   });
+  // },
 
-  deauthSocket: function(inputs) {
-    const req = this.req;
-    if(!req.isSocket) {
-      return res.json(400, 'This route is for socket connections only');
-    }
+  // deauthSocket: function(inputs) {
+  //   const req = this.req;
+  //   if(!req.isSocket) {
+  //     return res.json(400, 'This route is for socket connections only');
+  //   }
 
-    delete req.socket.User;
-    res.json(200, 'ok');
-  }
+  //   delete req.socket.User;
+  //   res.json(200, 'ok');
+  // }
 };

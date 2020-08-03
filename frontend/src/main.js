@@ -11,6 +11,7 @@ axios.defaults.baseURL = 'http://localhost:1337/';
 
 const store = new Vuex.Store({
   state: {
+    token: null,
     user: {
       userId: '1',
       first_name: "lorentz",
@@ -27,10 +28,19 @@ const store = new Vuex.Store({
   },
   getters: {
     is_authenticated (state) {
-      return state.user.authenticated
+      return (state.token != null)
     }
   },
   actions: {
+    login({commit}, loginCredentials) {
+      axios
+        .put('/api/v1/entrance/login', loginCredentials)
+        .then((response) => {
+          console.log(response.data);
+          commit('setToken', response.data.token);
+        })
+        .catch((error) => console.log(error));
+    },
     loadEvents({commit}) {
       axios
         .get("/events", {withCredentials: true})
@@ -51,8 +61,8 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
-    login (state) {
-      state.authenticated = true;
+    setToken (state, token) {
+      state.token = token;
     },
     logout (state) {
       state.authenticated = false;

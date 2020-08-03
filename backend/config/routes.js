@@ -45,6 +45,7 @@ module.exports.routes = {
 
   //USERS
   'GET /users':                                             { action: 'user/get-users' },
+  'DELETE /user':                                           { action: 'user/delete-user' },
 
   //JOB RESERVATION
   'GET /all-job-reservation-data':                          { action: 'jobReservation/get-all-jobs' },

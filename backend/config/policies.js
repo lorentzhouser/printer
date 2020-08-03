@@ -16,7 +16,7 @@ module.exports.policies = {
   'entrance/*': true,
   'account/logout': true,
   'committee/*': true,
-  'event/*': true,
+  // 'event/*': true,
   'project/*': true,
   'user/*': true,
   //need to validate is-logged-in policy

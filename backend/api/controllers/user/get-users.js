@@ -18,7 +18,8 @@ module.exports = {
           .populate('projects')
           .populate('event_registrations')
           .populate('waiting_lists');
-        return { users: users };
+        console.log(users.length);
+        return users;
         
     }
   

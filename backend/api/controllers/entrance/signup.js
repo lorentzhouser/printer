@@ -1,3 +1,4 @@
+var bcrypt = require('bcrypt');
 module.exports = {
 
 
@@ -79,7 +80,8 @@ the account verification message.)`,
     // (Also use `fetch` to retrieve the new ID so that we can use it below.)
     var newUserRecord = await User.create(_.extend({
       emailAddress: newEmailAddress,
-      password: await sails.helpers.passwords.hashPassword(inputs.password),
+      // password: await sails.helpers.passwords.hashPassword(inputs.password),
+      password: inputs.password,
       firstName: inputs.firstName,
       lastName: inputs.lastName,
       tosAcceptedByIp: this.req.ip

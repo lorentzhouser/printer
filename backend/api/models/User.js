@@ -9,7 +9,7 @@ var bcrypt = require('bcrypt');
 module.exports = {
 
   beforeCreate: function(data, cb) {
-    bcrypt.hash(data.password, sails.config.crypto.workFactor, function(err, hash) {
+    bcrypt.hash(data.password, 10, function(err, hash) {
       data.password = hash;
       delete data.passwordConfirm;
       cb();
@@ -18,7 +18,7 @@ module.exports = {
 
   beforeUpdate: function(data, cb) {
     if(data.password) {
-      bcrypt.hash(data.password, sails.config.crypto.workFactor, function(err, hash) {
+      bcrypt.hash(data.password, 10, function(err, hash) {
         data.password = hash;
         delete data.passwordConfirm;
         cb();
@@ -28,24 +28,13 @@ module.exports = {
     }
   },
 
-  verifyPassword: function(password, cb) {
-    return bcrypt.compare(password, this.password, cb);
-  },
-  
   customToJSON: function() {
-    var obj = this.toObject();
-    delete obj.password;
-    return obj;
+    // Return a shallow copy of this record with the password removed.
+    return _.omit(this, ['password'])
   },
-  
+
   attributes: {
-
-    
-
-    //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
-    //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
-    //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
-
+  
     emailAddress: {
       type: 'string',
       required: true,
