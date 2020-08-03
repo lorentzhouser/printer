@@ -9,43 +9,63 @@ Vue.config.productionTip = false
 Vue.use(Vuex)
 axios.defaults.baseURL = 'http://localhost:1337/';
 
+const token = localStorage.getItem('token')
+if (token) {
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+}
+
 const store = new Vuex.Store({
   state: {
-    token: null,
-    user: {
-      userId: '1',
-      first_name: "lorentz",
-      last_name: "houser",
-      authenticated: true,
-      allergies: [],
-      graduation_year: 2010,
-      komite: "my committee",
-      committees: ["committee1", "committee2"],
-      my_books: ["link", "link2"]
-    },
+    token: localStorage.getItem('token') || null,
+    user: null,
     events: [],
     projects: []
   },
   getters: {
     is_authenticated (state) {
       return (state.token != null)
-    }
+    },
   },
   actions: {
+    queryUser({commit}) {
+      const token = localStorage.getItem('token');
+      if (token != null) {
+        axios
+          .get('/me')
+          .then((response) => {
+            commit('setUser', response.data);
+          })
+          .catch((err) => {
+            console.log('error getting my details ' + err);
+          });
+      }
+    },
     login({commit}, loginCredentials) {
       axios
         .put('/api/v1/entrance/login', loginCredentials)
         .then((response) => {
-          console.log(response.data);
+          localStorage.setItem('token', response.data.token);
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.token;
+          commit('setUser', response.data.user);
           commit('setToken', response.data.token);
+          router.push('/');
+        })
+        .catch((error) => console.log(error));
+    },
+    logout({commit}) {
+      axios
+        .put('/api/v1/account/logout')
+        .then(() => {
+          localStorage.removeItem('token');
+          delete axios.defaults.headers.common['Authorization'];
+          commit('removeUserInformation');
         })
         .catch((error) => console.log(error));
     },
     loadEvents({commit}) {
       axios
-        .get("/events", {withCredentials: true})
+        .get("/events")
         .then(res => { 
-          console.log(res.data); 
           commit('setEvents', res.data.events);
         })
         .catch(error => {console.log(error)});
@@ -54,7 +74,6 @@ const store = new Vuex.Store({
       axios
         .get("/projects", {withCredentials : true})
         .then(res => { 
-          console.log(res.data); 
           commit('setProjects', res.data.projects);
         })
         .catch(error => {console.log(error)});
@@ -64,8 +83,12 @@ const store = new Vuex.Store({
     setToken (state, token) {
       state.token = token;
     },
-    logout (state) {
-      state.authenticated = false;
+    setUser (state, user) {
+      state.user = user;
+    },
+    removeUserInformation (state) {
+      state.token = null;
+      state.user = null;
     },
     setEvents (state, events) {
       state.events = events;

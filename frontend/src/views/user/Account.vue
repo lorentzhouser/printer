@@ -1,24 +1,24 @@
 <template>
     <div id="profile-page" class="container nav">
-        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+        <h2>{{ user.firstName }} {{user.lastName}} </h2>
         <div class="user-settings">
             <form method="post" class="user-info" autocomplete="off">
                 <div class="input-field">
-                    {{ user.allergies }}
+                    <!-- {{ user.allergies }} -->
                     <label for="allergies">Allergier</label>
                 </div>
                 <div class="input-field">
-                    {{ user.graduation_year }}
+                    <!-- {{ user.graduation_year }} -->
                     <label for="allergies">Allergier</label>
                 </div>
                 <div class="input-field">
-                    <input type="checkbox" id="is_komite" {% if request.user.komite is not None %}checked{% endif %}>
+                    <!-- <input type="checkbox" id="is_komite" {% if request.user.komite is not None %}checked{% endif %}> -->
                     <div class="checkmark"></div>
                     <label for="is_komite">Komitémedlem</label>
 
                     <div class="input-field">
-                        {{ user.komite }}
-                        <label for="{{ user.komite.id_for_label }}">Komitémedlem</label>
+                        <!-- {{ user.komite }} -->
+                        <label>Komitémedlem</label>
                     </div>
                 </div>
                 <div class="input-field">
@@ -30,7 +30,7 @@
             <form method="post" class="new-password">
             </form>
         </div>
-        <div id="books" class="my-books">
+        <!-- <div id="books" class="my-books">
             <h3>Mine bøker</h3>
             <br>
             <div class="box-container">
@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="user-activity">
 
         </div>
@@ -63,28 +63,30 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
+
 export default {
-    name: "Events",
+    name: "Account",
     components: {
-        Event,
+        
     },
     data: function() {
         return {
-          
+            
         }
     },
     computed: {
-        user: function() {
-            return this.$store.user;
-        }
-        is_authenticated: function() {
-            return this.$store.getters.is_authenticated;
-        }
+        ...mapState([
+            'user',
+        ]),
+        ...mapGetters([
+            'is_authenticated',
+        ]),
     }
 }
 </script>
 
 <style lang="scss" scoped>
-    @import "@/assets/css/pages/events/_profile.scss";
+    @import "@/assets/css/pages/_profile.scss";
 </style>
 

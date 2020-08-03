@@ -14,12 +14,12 @@ module.exports.policies = {
 
   // Bypass the `is-logged-in` policy for:
   'entrance/*': true,
-  'account/logout': true,
-  'committee/*': true,
+  // 'account/logout': true,
+  'committee/get-committees': true,
   // 'event/*': true,
-  'project/*': true,
+  'project/get-projects': true,
   'user/*': true,
-  //need to validate is-logged-in policy
+  // need to validate is-logged-in policy
 
   // 'view-homepage-or-redirect': true,
   // 'view-faq': true,

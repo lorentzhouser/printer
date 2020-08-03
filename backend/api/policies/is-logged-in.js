@@ -16,6 +16,7 @@ module.exports = async function (req, res, proceed) {
       })
         .switch({
             error: function (err) {
+                console.log("server error in switch");
                 return res.serverError(err)
             },
             invalid: function (err) {

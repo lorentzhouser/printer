@@ -10,6 +10,8 @@
 <script>
 import NavBar from './components/NavBar.vue'
 import ReservationModule from './components/ReservationModule/ReservationModule.vue'
+// import {mapState} from 'vuex'
+import axios from 'axios'
 
 export default {
   name: 'App',
@@ -22,6 +24,27 @@ export default {
       notifVisible: false,
       file: '',
     }
+  },
+  created: function() {
+    if (this.user == null) {
+      this.$store.dispatch('queryUser');
+    }
+
+    if (axios.defaults.headers.common['Authorization'] == 'null') {
+      console.log('no header autho')
+      this.$store.dispatch('logout');
+    }
+    
+    //logout if jwt token has expired
+     axios.interceptors.response.use(undefined, function (err) {
+      return new Promise(function (resolve, reject) {
+        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
+          this.$store.dispatch('logout')
+          resolve();
+        }
+        reject(err);
+      });
+    });
   },
   methods:{
     dropped(e) { 

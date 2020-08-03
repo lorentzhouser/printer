@@ -33,13 +33,9 @@ module.exports = {
       if (!token) return exits.invalid()
       // if there is something, attempt to parse it as a JWT token
       
-      tokenauth.getUser(token, function(err, user) {
-        if (err != null) {
-          return exits.invalid();
-        }
-        else {
-          return exits.success();
-        }
+      return tokenauth.verifyToken(token, function(err, data) {
+        if (err != null) { return exits.invalid(); }
+        else { return exits.success(); }
       });
 
     }
@@ -48,3 +44,12 @@ module.exports = {
     }
   }
 }
+
+// tokenauth.getUser(token, function(err, user) {
+//   if (err != null) {
+//     return exits.invalid();
+//   }
+//   else {
+//     return exits.success(user);
+//   }
+// });

@@ -192,11 +192,9 @@ email status until they click the link in the confirmation email.`
     //  ╠═╣╚═╗╚═╗║ ║║  ║╠═╣ ║ ║║ ║║║║╚═╗
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
     // n/a
-
+    
   },
 
-  fullName: function() {
-    return firstName + ' ' + lastName;
-  }
+  
 
 };
