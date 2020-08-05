@@ -17,7 +17,8 @@ module.exports = {
         const users = await User.find()
           .populate('projects')
           .populate('event_registrations')
-          .populate('waiting_lists');
+          .populate('waiting_lists')
+          .populate('committee');
         console.log(users.length);
         return users;
         

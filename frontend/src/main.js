@@ -18,6 +18,7 @@ const store = new Vuex.Store({
   state: {
     token: localStorage.getItem('token') || null,
     user: null,
+    committees: [],
     events: [],
     projects: []
   },
@@ -39,6 +40,30 @@ const store = new Vuex.Store({
             console.log('error getting my details ' + err);
           });
       }
+    },
+    loadCommittees({commit}) {
+      axios
+        .get("/committees")
+        .then(res => {
+          commit('setCommittees', res.data.committees)
+        })
+        .catch(error => console.log(error));
+    },
+    loadEvents({commit}) {
+      axios
+        .get("/events")
+        .then(res => { 
+          commit('setEvents', res.data.events);
+        })
+        .catch(error => {console.log(error)});
+    },
+    loadProjects({commit}) {
+      axios
+        .get("/projects", {withCredentials : true})
+        .then(res => { 
+          commit('setProjects', res.data.projects);
+        })
+        .catch(error => {console.log(error)});
     },
     login({commit}, loginCredentials) {
       axios
@@ -62,22 +87,6 @@ const store = new Vuex.Store({
         })
         .catch((error) => console.log(error));
     },
-    loadEvents({commit}) {
-      axios
-        .get("/events")
-        .then(res => { 
-          commit('setEvents', res.data.events);
-        })
-        .catch(error => {console.log(error)});
-    },
-    loadProjects({commit}) {
-      axios
-        .get("/projects", {withCredentials : true})
-        .then(res => { 
-          commit('setProjects', res.data.projects);
-        })
-        .catch(error => {console.log(error)});
-    },
   },
   mutations: {
     setToken (state, token) {
@@ -89,6 +98,9 @@ const store = new Vuex.Store({
     removeUserInformation (state) {
       state.token = null;
       state.user = null;
+    },
+    setCommittees (state, committees) {
+      state.committees = committees;
     },
     setEvents (state, events) {
       state.events = events;

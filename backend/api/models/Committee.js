@@ -31,6 +31,11 @@ module.exports = {
         description: 'path to committee icon asset'
       },
 
+      users: { 
+        collection: 'user',
+        via: 'committee'
+      }
+
     },
 
   };

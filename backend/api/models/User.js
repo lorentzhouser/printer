@@ -130,6 +130,14 @@ email status until they click the link in the confirmation email.`
 
     // DYNAMIC ATTRIBUTES
 
+    allergies: {
+      type: 'string',
+    },
+
+    committee: {
+      model: 'committee',
+    },
+
     projects: {
       collection: 'project',
       via: 'owner',

@@ -46,6 +46,7 @@ module.exports.routes = {
   //USERS
   'GET /users':                                             { action: 'user/get-users' },
   'GET /me':                                                { action: 'user/me' },
+  'PUT /me':                                                { action: 'user/update-me' },
   'DELETE /user':                                           { action: 'user/delete-user' },
 
   //JOB RESERVATION

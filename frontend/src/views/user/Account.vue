@@ -1,63 +1,52 @@
 <template>
     <div id="profile-page" class="container nav">
         <h2>{{ user.firstName }} {{user.lastName}} </h2>
+        <br>
         <div class="user-settings">
-            <form method="post" class="user-info" autocomplete="off">
+            <div class="user-info" autocomplete="off">
                 <div class="input-field">
-                    <!-- {{ user.allergies }} -->
-                    <label for="allergies">Allergier</label>
+                    <input v-model="allergies" name="new-password" placeholder="Allergier" autocomplete="off">
+                    <label>Allergier</label>
                 </div>
+                <br>
                 <div class="input-field">
-                    <!-- {{ user.graduation_year }} -->
-                    <label for="allergies">Allergier</label>
+                    <select>
+                        <option v-for="classYear in classYears" v-bind:key="classYear.id">
+                            {{ classYear.name }}
+                        </option>
+                    </select>
                 </div>
+                <br>
                 <div class="input-field">
-                    <!-- <input type="checkbox" id="is_komite" {% if request.user.komite is not None %}checked{% endif %}> -->
+                    <input type="checkbox" id="is_komite" v-model="myCommittee">
                     <div class="checkmark"></div>
                     <label for="is_komite">Komitémedlem</label>
 
                     <div class="input-field">
-                        <!-- {{ user.komite }} -->
-                        <label>Komitémedlem</label>
+                        <select v-model="myCommittee">
+                            <option v-for="committee in committees" :value="committee.name" :key="committee.id">
+                                {{ committee.name }}
+                            </option>
+                        </select>
                     </div>
                 </div>
+                <br>
                 <div class="input-field">
                     <input name="new-password" type="password" placeholder="Nytt passord" autocomplete="new-password">
-                    <label for="allergies">Nytt passord</label>
+                    <label>Nytt passord</label>
                 </div>
+                <br>
                 <button type="submit" class="button"><span>Lagre</span></button>
-            </form>
-            <form method="post" class="new-password">
-            </form>
-        </div>
-        <!-- <div id="books" class="my-books">
-            <h3>Mine bøker</h3>
-            <br>
-            <div class="box-container">
-                <div v-for="book in user.my_books" class="book box">
-                    <div class="image-container">
-                        <img src="{{ book.image.url }}" alt="">
-                    </div>
-                    <p class="caption gray">{{ book.course.name }} – {{ book.course.course_code }}</p>
-                    <p class="">{{ book.title }}</p>
-                    <div class="bottom">
-                        <p class="caption">{{ book.seller.first_name }} {{ book.seller.last_name }},
-                            {{ book.seller.get_class_year }}.
-                            klasse</p>
-                        <h6 class="subtitle2">{{ book.price }} kr</h6>
-                        <br>
-                        <button class="button book-delete" data-book-pk="{{ book.pk }}"><img src="{% static 'img/icons/close_white.svg' %}"><span>Slett</span></button>
-                    </div>
-                </div>
+            
             </div>
-        </div> -->
+        </div>
         <div class="user-activity">
 
         </div>
         <br>
         <br>
         <br>
-        <router-link to="/logout" class="button secondary">Logg ut</router-link>
+        <router-link to="/logout" class="button secondary"><span>Logg ut</span></router-link>
     </div>
 </template>
 
@@ -72,17 +61,30 @@ export default {
     },
     data: function() {
         return {
-            
+            classYears: [
+                {id: 0, name: '1.klasse'},
+                {id: 1, name: '2.klasse'},
+                {id: 2, name: '3.klasse'},
+                {id: 3, name: '4.klasse'},
+                {id: 4 ,name: '5.klasse'},
+                {id: 5, name: 'Alumni'},
+            ],
+            myCommittee: 'Webkomiteen',
+            allergies: "Gluten",
         }
     },
     computed: {
         ...mapState([
             'user',
+            'committees',
         ]),
         ...mapGetters([
             'is_authenticated',
         ]),
-    }
+    },
+    created: function() {
+        this.$store.dispatch('loadCommittees');
+    },
 }
 </script>
 

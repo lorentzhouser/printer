@@ -13,7 +13,6 @@ module.exports = {
         }
     },
     fn: async function (exits) {
-        const exitos = exits;
         if (this.req.header('authorization')) {
             // if one exists, attempt to get the header data
             var token = this.req.header('authorization').split('Bearer ')[1]
