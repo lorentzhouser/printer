@@ -26,6 +26,7 @@ module.exports = {
                 .populate('projects')
                 .populate('event_registrations')
                 .populate('waiting_lists')
+                .populate('committee')
             
             if (user) {
                 return user;

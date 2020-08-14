@@ -46,7 +46,7 @@
         <br>
         <br>
         <br>
-        <router-link to="/logout" class="button secondary"><span>Logg ut</span></router-link>
+        <router-link to="/logout"><button class="button secondary"><span>Logg ut</span></button></router-link>
     </div>
 </template>
 
@@ -69,8 +69,8 @@ export default {
                 {id: 4 ,name: '5.klasse'},
                 {id: 5, name: 'Alumni'},
             ],
-            myCommittee: 'Webkomiteen',
-            allergies: "Gluten",
+            myCommittee: '',
+            allergies: '',
         }
     },
     computed: {
@@ -84,6 +84,9 @@ export default {
     },
     created: function() {
         this.$store.dispatch('loadCommittees');
+        const me = this.$store.state.user;
+        this.myCommittee = me.committee.name;
+        this.allergies = me.allergies;
     },
 }
 </script>

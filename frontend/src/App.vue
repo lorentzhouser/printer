@@ -10,7 +10,6 @@
 <script>
 import NavBar from './components/NavBar.vue'
 import ReservationModule from './components/ReservationModule/ReservationModule.vue'
-// import {mapState} from 'vuex'
 import axios from 'axios'
 
 export default {

@@ -41,6 +41,15 @@ const store = new Vuex.Store({
           });
       }
     },
+    updateUser({commit}, newUser) {
+      axios
+        .put('/me', newUser)
+        .then(response => {
+          console.log('update global user with new parameters if success');
+          commit('setUser', response.data);
+        })
+        .catch(error => console.log(error));
+    },
     loadCommittees({commit}) {
       axios
         .get("/committees")
