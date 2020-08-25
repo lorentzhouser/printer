@@ -46,14 +46,14 @@ export default {
           lines: ''
         },
         proposal: {
-          recommendJobStart: {
-            startTime: 100,
-            printer: 1
-          },
-          urgentJobStart: {
-            startTime: 50,
-            printer: 2
-          },
+          // recommendJobStart: {
+          //   startTime: 100,
+          //   printer: 1
+          // },
+          // urgentJobStart: {
+          //   startTime: 50,
+          //   printer: 2
+          // },
         },
         selectedOption: '',
       }      
@@ -72,6 +72,7 @@ export default {
         return true;
       },
       generateReceipt: function() {
+        if (Object.keys(this.proposal).length == 0) { return {}; }
         var receipt = {
           startTime: '',
           device: '',
@@ -79,12 +80,12 @@ export default {
         };
         
         if (this.selectedOption == 'recommended') {
-          receipt.startTime = this.proposal.recommended.startTime;
-          receipt.printer = this.proposal.recommended.printer;  
+          receipt.startTime = this.proposal.recommendJobStart.startTime;
+          receipt.printer = this.proposal.recommendJobStart.printer;  
         }
         else if (this.selectedOption == 'urgent') {
-          receipt.startTime = this.proposal.urgent.startTime;
-          receipt.printer = this.proposal.urgent.printer;  
+          receipt.startTime = this.proposal.urgentJobStart.startTime;
+          receipt.printer = this.proposal.urgentJobStart.printer;  
         }
          
         return receipt;

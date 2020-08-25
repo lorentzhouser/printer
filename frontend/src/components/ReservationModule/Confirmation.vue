@@ -2,13 +2,13 @@
     <div id="Confirmation">
         <div class="receipt">
             <div id="confirm-schedule" class="subtitle">
-                {{receipt.startTime}}
+                {{receipt.startTime || 'no data'}}
             </div>
             <div id="confirm-printer" class="caption">
                 printer {{receipt.printer}}
             </div>
             <div id="confirm-filament" class="caption">
-                {{receipt.filament}} mm
+                {{receipt.filament || 'no data'}} mm
             </div>
         </div>
         <div @click="confirmReservation" id="reserve-button" class="confirm Button">RESERVE</div>
