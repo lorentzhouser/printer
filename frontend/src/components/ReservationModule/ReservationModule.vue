@@ -46,11 +46,11 @@ export default {
           lines: ''
         },
         proposal: {
-          recommended: {
+          recommendJobStart: {
             startTime: 100,
             printer: 1
           },
-          urgent: {
+          urgentJobStart: {
             startTime: 50,
             printer: 2
           },
@@ -159,7 +159,9 @@ export default {
 
           const url='http://localhost:1337/reservation-proposal/'+duration;
           axios.get(url)
-            .then(res => this.proposal = res.data)
+            .then(res => {
+              self.proposal = res.data;
+            })
             .catch(err => console.log("error " + err));
 
         } else if ("layers" in e.data) {

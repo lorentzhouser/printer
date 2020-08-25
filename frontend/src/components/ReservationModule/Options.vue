@@ -3,13 +3,13 @@
         <div class="MenuOption">
         <div class="InfoTextOption" @click="selectOption('recommended')">
             <div class="subtitle2">Recommended</div>
-            <div class="caption">{{proposal.recommended.startTime}}</div>
+            <div class="caption">{{proposal.recommendJobStart.startTime}}</div>
         </div>
         </div>
         <div class="MenuOption" @click="selectOption('urgent')">
         <div class="InfoTextOption">
             <div class="subtitle2">Urgent</div>
-            <div class="caption">{{proposal.urgent.startTime}}</div>
+            <div class="caption">{{proposal.urgentJobStart.startTime}}</div>
         </div>
         </div>
         <div class="MenuOption" @click="other">

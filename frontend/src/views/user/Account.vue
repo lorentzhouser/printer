@@ -88,6 +88,11 @@ export default {
         this.myCommittee = me.committee.name;
         this.allergies = me.allergies;
     },
+    methods: { 
+        update: function() {
+            console.log('update user parameters');
+        }
+    },
 }
 </script>
 

@@ -21,9 +21,9 @@ module.exports = {
   
     fn: async function () {
   
-      if (!this.req.me) {
-        throw {redirect: '/'};
-      }
+      // if (!this.req.me) {
+      //   throw {redirect: '/'};
+      // }
       const reservationDuration = this.req.params.duration;
       const jobProposals = await PrintJob.proposeJobs(reservationDuration);
       
