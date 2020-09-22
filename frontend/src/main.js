@@ -41,11 +41,12 @@ const store = new Vuex.Store({
           });
       }
     },
-    updateUser({commit}, newUser) {
+    updateUser({commit}, updateUser) {
+      console.log('update user');
       axios
-        .put('/me', newUser)
+        .put('/me', updateUser)
         .then(response => {
-          console.log('update global user with new parameters if success');
+          console.log('response.data: ' + response.data)
           commit('setUser', response.data);
         })
         .catch(error => console.log(error));
@@ -87,14 +88,10 @@ const store = new Vuex.Store({
         .catch((error) => console.log(error));
     },
     logout({commit}) {
-      axios
-        .put('/api/v1/account/logout')
-        .then(() => {
-          localStorage.removeItem('token');
-          delete axios.defaults.headers.common['Authorization'];
-          commit('removeUserInformation');
-        })
-        .catch((error) => console.log(error));
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common['Authorization'];
+      commit('removeUserInformation');
+      router.push('/');
     },
   },
   mutations: {

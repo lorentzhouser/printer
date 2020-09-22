@@ -32,11 +32,11 @@
                 </div>
                 <br>
                 <div class="input-field">
-                    <input name="new-password" type="password" placeholder="Nytt passord" autocomplete="new-password">
+                    <input v-model="password" name="new-password" type="password" placeholder="Nytt passord" autocomplete="new-password">
                     <label>Nytt passord</label>
                 </div>
                 <br>
-                <button type="submit" class="button"><span>Lagre</span></button>
+                <button @click="update" type="submit" class="button"><span>Lagre</span></button>
             
             </div>
         </div>
@@ -46,7 +46,8 @@
         <br>
         <br>
         <br>
-        <router-link to="/logout"><button class="button secondary"><span>Logg ut</span></button></router-link>
+        <!-- <router-link to="/logout"><button class="button secondary"><span>Logg ut</span></button></router-link> -->
+        <button @click="logout" class="button secondary"><span>Logg ut</span></button>
     </div>
 </template>
 
@@ -71,6 +72,7 @@ export default {
             ],
             myCommittee: '',
             allergies: '',
+            password: '',
         }
     },
     computed: {
@@ -90,7 +92,23 @@ export default {
     },
     methods: { 
         update: function() {
-            console.log('update user parameters');
+            var committeeId = null;
+            this.committees.forEach(com => {
+                if (com.name == this.myCommittee) {
+                    committeeId = com.id;
+                }
+            });
+            console.log('committee id: ' + committeeId);
+            const updateUser = {
+                committee: committeeId,
+                graduationYear: this.classYears[1].id,
+                allergies: this.allergies,
+                password: this.password,
+            }
+            this.$store.dispatch('updateUser', updateUser);
+        },
+        logout: function() {
+            this.$store.dispatch('logout');
         }
     },
 }

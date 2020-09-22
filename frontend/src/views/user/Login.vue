@@ -2,17 +2,22 @@
    <div id="login-page" class="container nav max-mobile center">
         <h1 class="center">Logg inn</h1>
         <br><br><br><br>
-
-            <label>
-            <input v-model="email" placeholder="email" class="input-field fluid">
-            </label>
-            <input v-model="password" placeholder="password" class="input-field fluid">
-            
-            <button class="button fluid" type="submit" @click="login"><span>Logg inn</span></button>
-            <br><br><br>
-            <a class="button secondary center" href="{% url 'register' %}" style="width: 80%"><span>Registrer ny bruker</span></a>
-            <br><br>
-            <a class="link center" href="/accounts/password_reset">Glemt passordet?</a>
+        
+        <div class="input-field fluid">
+            <input v-model="email" type="text" placeholder="email">
+            <label>email</label>
+        </div>
+        <br>
+        <div class="input-field fluid">
+            <input v-model="password" type="password" placeholder="password">
+            <label>password</label>
+        </div>
+        <br>
+        <button class="button fluid" type="submit" @click="login"><span>Logg inn</span></button>
+        <br><br><br>
+        <a class="button secondary center" href="{% url 'register' %}" style="width: 80%"><span>Registrer ny bruker</span></a>
+        <br><br>
+        <a class="link center" href="/accounts/password_reset">Glemt passordet?</a>
         
     </div>
 </template>
@@ -28,16 +33,11 @@ export default {
             password: ""
         }
     },
-    computed: {
-        // is_authenticated: function() {
-        //     return this.$store.getters.is_authenticated;
-        // }
-    },
     methods: {
         login: function() {
             const reqData = {
-                emailAddress: 'stine@me.com',
-                password: '1234',
+                emailAddress: this.email,
+                password: this.password,
                 rememberMe: true,
             };
             this.$store.dispatch('login', reqData);
@@ -47,6 +47,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    // @import "@/assets/css/pages";
+    // @import "@/assets/css/components/_inputs.scss";
+    // @import "@/assets/css/components/_buttons.scss";
 </style>
 

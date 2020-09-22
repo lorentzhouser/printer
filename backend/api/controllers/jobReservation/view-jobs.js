@@ -16,9 +16,9 @@ module.exports = {
   
     fn: async function () {
   
-		if (!this.req.me) {
-			throw {redirect: '/'};
-		}
+		// if (!this.req.me) {
+		// 	throw {redirect: '/'};
+		// }
 		
 		const currentEpochSeconds = Math.round((new Date()).getTime() / 1000);
 		const result = await PrintJob.find().sort('date ASC');

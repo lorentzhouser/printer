@@ -25,7 +25,7 @@ module.exports = {
     exits: {
       
       success: {
-        description: 'New event created successfully.'
+        description: 'User updated successfully.'
       },
 
       redirect: {
@@ -42,13 +42,21 @@ module.exports = {
         if (!token) return exits.invalid()
         const userId = await tokenauth.getUserId(token);
 
+        console.log('userId: ' + userId);
         var updateObject = {};
+        if (inputs.password != null) { updateObject.password = inputs.password; }
         if (inputs.committee != null) { updateObject.committee = inputs.committee; }
         if (inputs.graduatingYear != null) { updateObject.graduatingYear = inputs.graduatingYear; }
         if (inputs.allergies != null) { updateObject.allergies = inputs.allergies; }
         
-        const user = await User.update({id: userId}).set(updateObject).fetch();
-        return exits.success(user);
+        const users = await User.update({id: userId}).set(updateObject).fetch();
+        const queryUser = await User.findOne({id: userId})
+          .populate('committee')
+          .populate('event_registrations')
+          .populate('waiting_lists')
+          .populate('committee');
+
+        return exits.success(queryUser);
       }
       else {
         return exits.invalid;

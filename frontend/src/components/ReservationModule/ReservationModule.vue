@@ -87,7 +87,7 @@ export default {
           receipt.startTime = this.proposal.urgentJobStart.startTime;
           receipt.printer = this.proposal.urgentJobStart.printer;  
         }
-         
+        
         return receipt;
       }
     },

@@ -32,7 +32,6 @@ module.exports = {
                 return user;
             }
             else {
-                console.log('calledddddd');
                 return exits.invalid;      
             }
         }

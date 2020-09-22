@@ -14,7 +14,12 @@ Vue.use(VueRouter)
   {
     path: '/student/tips',
     name: 'Tips',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/Tips.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/student/tips/Tips.vue')
+  },
+  {
+    path: '/student/new-tip',
+    name: 'NewTip',
+    component: () => import(/* webpackChunkName: "about" */ '../views/student/tips/New-Tip.vue')
   },
   // {
     //NEEDS MAJOR RENOVATION  

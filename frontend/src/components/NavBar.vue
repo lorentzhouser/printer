@@ -36,7 +36,6 @@
             <li><router-link to="/prosjekter" class="nav-item">Prosjekter</router-link></li>
             <li><router-link to="/arrangementer" class="nav-item">Arrangementer</router-link></li>
             <li><router-link to="/job-reservations" class="nav-item">Print</router-link></li>
-            <li><div @click="logout" class="nav-item">Logout</div></li>
 
             
             <li v-if="is_authenticated">
@@ -64,11 +63,6 @@ export default {
       'is_authenticated'
       ])
     },
-    methods: {
-      logout: function() {
-        this.$store.dispatch('logout');
-      }
-    }
 }
 </script>
 
