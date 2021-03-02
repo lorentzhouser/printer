@@ -15,7 +15,6 @@ module.exports.policies = {
   // Bypass the `is-logged-in` policy for:
   'entrance/*': true,
   // 'account/logout': true,
-  'committee/get-committees': true,
   // 'event/*': true,
   'project/get-projects': true,
   'user/*': true,

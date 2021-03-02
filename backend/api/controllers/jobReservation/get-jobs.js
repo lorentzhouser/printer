@@ -1,7 +1,7 @@
 module.exports = {
 
 
-    friendlyName: 'View all jobs',
+    friendlyName: 'View relevant jobs',
   
   
     description: 'Display jobs page.',

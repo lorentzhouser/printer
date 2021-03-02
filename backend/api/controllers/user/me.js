@@ -23,10 +23,6 @@ module.exports = {
             const userId = await tokenauth.getUserId(token);
     
             const user = await User.findOne({id: userId})
-                .populate('projects')
-                .populate('event_registrations')
-                .populate('waiting_lists')
-                .populate('committee')
             
             if (user) {
                 return user;

@@ -57,28 +57,6 @@ module.exports.routes = {
   'POST  /api/v1/reserve-job':                              { action: 'jobReservation/create-job' },
   'POST  /api/v1/generate-job':                             { action: 'jobReservation/generate-job' },
   'DELETE  /api/v1/delete-job/:jobId':                      { action: 'jobReservation/delete-job' },
-
-  //COMMITTEE
-  'POST  /committee':                                       { action: 'committee/create-committee' },
-  'GET   /committees':                                      { action: 'committee/get-committees' },
-  'DELETE  /committees':                                    { action: 'committee/delete-committees' },
-
-  //EVENT
-  'POST  /event':                                           { action: 'event/create-event' },
-  'GET   /events':                                          { action: 'event/get-events' },
-  'DELETE  /events':                                        { action: 'event/delete-events' },
-
-  //PROJECTS
-  'POST    /project':                                       { action: 'project/create-project' },
-  'PUT     /project':                                       { action: 'project/update-project' },
-  'DELETE  /project':                                       { action: 'project/delete-project' },
-  'GET     /projects':                                      { action: 'project/get-projects' },
-  'DELETE  /projects':                                      { action: 'project/delete-projects' },
-
-  //PROJECT-IMAGES
-  'POST  /project-image':                                   { action: 'project/projectImage/create-project-image' },
-  'GET   /project-images':                                  { action: 'project/projectImage/get-project-images' },
-  'DELETE  /project-images':                                { action: 'project/projectImage/delete-project-images' },
-
+  'DELETE /delete-all-jobs':                                { action: 'jobReservation/delete-all-jobs' },
 
 };

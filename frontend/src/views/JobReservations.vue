@@ -1,5 +1,15 @@
 <template>
     <div>
+        <div class="TempNav">
+            <div class="PageTitle">Printer Reservation</div>
+            <div class="UserInfo">
+              <button class="NewReservationBtn" @click="openReservationModal">
+                <span>+</span>
+              </button>
+              {{username}}
+            </div>
+        </div>
+        
         <div class="HorizontalScrollingContainer" id="ScrollingContainer">
             <div class="TimeContainer">
                 <!-- <div class="LeftColumnTitle"></div> -->
@@ -11,7 +21,15 @@
 
             <div class="Queue" v-bind:key="printerQueue.device" v-for="printerQueue in computedPrinterQueues">
                 <div class="LeftColumnTitle">{{printerQueue.device}}</div>
-                <div class="Job" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
+
+                <!-- <Moveable class="moveable" v-bind="moveable" @drag="handleDrag" @resize="handleResize" @scale="handleScale" @rotate="handleRotate" @warp="handleWarp" @pinch="handlePinch"></Moveable> -->
+
+                <!-- <Moveable class="Job" :draggable="true" @drag="handleDrag" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left }"></Moveable> -->
+
+                <!-- <movable class="testmove" posTop="444" :grid="20"><span>grid:20</span></movable> -->
+                <!-- <movable class="Job" posLeft="job.left" shiftKey="true" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage}"></movable> -->
+
+                <div v-dragged="onDragged" class="Job" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
                 <div class="RightColumnOpacity"></div>
             </div>
 
@@ -43,63 +61,58 @@
 </template>
 
 <script>
-import axios from "axios";
-
+import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
+// import Moveable from 'vue-moveable';
+ 
 export default {
     name: 'JobReservations',
-    data: function () {
-        return {
-            sliderValue: 1, //slider value is simply the number of hours for an interval.
-            printerQueues: [
-                {
-                    device: 1,
-                    jobs: [
-                        {
-                            duration: 5000,
-                            date: Number(Date.now()/1000 + 1500),
-                            priority: 'Job',
-                        },
-                        {
-                            duration: 15000,
-                            date: Number((Date.now()/1000) + 9500),
-                            priority: 'Urgent',
-                        },
-                    ]
-                },
-                {
-                    device: 2,
-                    jobs: [
-                        {
-                            duration: 2000,
-                            date: Number(Date.now()/1000 + 3000),
-                            priority: 'Private',
-                        },
-                        {
-                            duration: 19000,
-                            date: Number(Date.now()/1000 + 15000),
-                            priority: 'Job',
-                        },
-                    ]
-                },
-                {
-                    device: 3,
-                    jobs: [
-                        {
-                            duration: 5000,
-                            date: Number(Date.now()/1000 + 6000),
-                            priority: 'Job',
-                        },
-                        {
-                            duration: 3000,
-                            date: Number(Date.now()/1000 + 13000),
-                            priority: 'Job',
-                        },
-                    ]
-                }
-            ],
+    data: function() {
+      return {
+        startTop: -1,
+      }
+    },
+    methods: {
+      openReservationModal: function() {
+        console.log("open reservation modally");
+        this.$emit('toggleVisibility', true);
+      },
+      handleDrag({ target, transform }) {
+        console.log('onDrag left, top', transform);
+        this.lastDragged = target;
+        target.style.transform = transform;
+      },
+      endDrag() {
+        // const target = this.lastDragged;
+        // console.log('drog ended');
+      },
+      onDragged({ el, deltaX, deltaY, clientX, clientY, offsetX, offsetY, first, last }) {
+        console.log('offset: ' + offsetX + ', ' + offsetY);
+        console.log('ignore this: ' + clientX + ', ' + clientY);
+        if (first) {
+          this.startTop = el.style.top;
+          console.log('start');
+          
+          el.style.zIndex = "500";
+          return
         }
+        if (last) { //COMPLETE DRAG
+          
+          //RESET Z-Index after animation
+          el.style.zIndex = "10";
+          
+          
+          return
+        }
+        var l = +window.getComputedStyle(el)['left'].slice(0, -2) || 0
+        var t = +window.getComputedStyle(el)['top'].slice(0, -2) || 0
+        el.style.left = l + deltaX + 'px'
+        el.style.top = t + deltaY + 'px'
+      }
     },
     computed: {
+        ...mapState(['sliderValue', 'printerQueues', 'newJob']),
+        ...mapGetters(['username']),
         computedPrinterQueues: function() {
             const computedPrinterQueue = this.printerQueues;
             computedPrinterQueue.forEach(printerQueue => {
@@ -111,7 +124,6 @@ export default {
                     - ratio is this.sliderWidth per 10% -> this.sliderValue/.10
                     Percentage = (job.duration * 10%) / (this.sliderValue * 3600)
                     */
-                    
                     job.widthPercentage = (job.duration * 10) / (this.sliderValue * 3600) + '%';
                     /*
                     - recalibrate left positioning
@@ -133,7 +145,14 @@ export default {
                     
                     const distanceFromLocalHour = (deltaTimeInHours*10)/(Number(this.sliderValue));
                     // console.log('distanceFromLocalHour %: ' + distanceFromLocalHour);
-                    job.left = distanceFromLocalHour+'%';
+                    // job.left = distanceFromLocalHour+'%';
+
+                    //Could choose 100 px per hour 
+
+                    // const pixelDistanceFromLocalHours = (1500/deltaTimeInHours);
+
+                    job.left = distanceFromLocalHour + '%';
+                    // job.left = pixelDistanceFromLocalHours + 'px';
                 });
             });
             return computedPrinterQueue;
@@ -211,206 +230,17 @@ export default {
                 //remove first time for clarity (temporarily for testing)
                 timelineObject[0] = {};
                 return timelineObject;
-            },
+            }
     },
     created() {
         //deal with cors
-        axios.get("/job-reservations", {withCredentials: true})
-            .then(res => { 
-                this.printerQueues = res.data.printerQueues;
-            })
-            .catch(err => console.log(err));
+        // this.$store.dispatch('queryJobs');
     }
 }    
 </script>
 
 <style lang="scss" scoped>
-
-  .HorizontalScrollingContainer {
-    /* width: 100%; */
-    margin-top: $nav-height;
-    overscroll-behavior-x: none;
-    overflow-y: hidden; /*whole page should be scrolling.. not this div*/
-    overflow-x: scroll;
-    white-space: nowrap;
-    background-color: transparent;
-    /* border-width: 1px;
-    border-color: red;
-    border-style: solid;
-    */
-  }
-  
-  .TimeContainer {
-    position: relative;
-    background-color: transparent;
-    display: inline-block;
-    height: auto;
-    width: 100%;
-    margin-bottom: 10px;
-    font-size: small;
-    /* overflow-y: hidden; */
-    /* overflow-x: hidden; */
-  }
-  
-  .Day {
-    height: 25px;
-  }
-  
-  .TimeElement {
-    display: inline-block;
-    background-color: #F3F2EF;
-    vertical-align: middle;
-    width: 10%;
-    color: black;
-    white-space: nowrap;
-  }
-  
-  .Queue {
-    position: relative;
-    vertical-align: middle;
-    margin-bottom: 5px;
-    height: 50px;
-    width: 100%;
-    background-color: transparent;
-     /* border-width: 1px; */
-     /* border-color: green; */
-     /* border-style: solid; */
-  }
-  
-  .LeftColumnTitle {
-    z-index: 1;
-    position: fixed;
-    background-color: #F3F2EF;
-    opacity: 0.8;
-    font-size: x-large;
-    text-align: center;
-    vertical-align: middle;
-    color: black;
-    float: left;
-    width: 4%;
-    height: 50px;
-    line-height: 2.1;
-    overflow: hidden;
-   
-  }
-  
-  .RightColumnOpacity { 
-    z-index: 1;
-    position: fixed;
-    right: 0px;
-    background-color: #F3F2EF;
-    opacity: 0.8;
-    width: 4%;
-    height: 50px;  
-  }
-  
-  .Job {
-    /* https://stackoverflow.com/questions/5209814/can-i-position-an-element-fixed-relative-to-parent */
-    position: absolute;
-    margin: 0px;
-    float: left;
-    text-align: left;
-    width: 20%;
-    height: 100%;
-    background-color: #C23546;
-    color: #E5E5E5;
-    border-radius: 8px;
-  }
-  
-  .Job:hover {
-    border-width: thin;
-    border-color: black;
-    border-style: solid;
-  }
-  
-  .ScrollMargin {
-    height: 10px;
-    width: 100%;
-  }
-  
-  .Urgent {
-    background-color: #F0AE1A;
-    overflow: hidden;
-    position: absolute;
-    margin: 0px;
-    float: left;
-    text-align: left;
-    width: 20%;
-    height: 100%;
-    color: #E5E5E5;
-  }
-  
-  .Private {
-    background-color: #3B208B;
-    overflow: hidden;
-    position: absolute;
-    margin: 0px;
-    float: left;
-    text-align: left;
-    width: 20%;
-    height: 100%;
-    color: #E5E5E5;
-  }
-  
-  .SlideContainer {
-    z-index: 1000;
-    position: relative;
-    width: 100%;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    height: 10px;
-  }
-  
-  .Slider {
-    position: absolute;
-    right: 30px;
-    top: 0px;
-  }
-  
-  .Legend {
-    position: absolute;
-    left: 2%;
-    margin-top: 30px;
-    width: 50%;
-    height: 50px;
-    display: grid;
-  }
-  
-  .Key {
-    position: relative;
-    width: 60px;
-    height: 20px;
-    border-radius: 8px;
-    float: left;
-    margin: 5px;
-  }
-  
-  .LegendText {
-    position: relative;
-    margin-left: 35px;
-    line-height: 1.8;
-  }
-  
-  .Actions {
-    position: absolute; 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    right: 5%;
-    width: 30%;
-    height: 100px;
-    padding: 20px;
-    padding-left: 50px;
-  }
-  
-  .GantAction {
-    margin: 10px;
-    background-color: black;
-    color: white;
-  }
-  
-  .GantAction:disabled {
-    opacity: 10%;
-  }
+  @import "@/assets/css/pages/_job-reservations.scss";
 </style>
 
 

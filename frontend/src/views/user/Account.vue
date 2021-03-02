@@ -78,7 +78,6 @@ export default {
     computed: {
         ...mapState([
             'user',
-            'committees',
         ]),
         ...mapGetters([
             'is_authenticated',

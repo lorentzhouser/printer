@@ -1,3 +1,6 @@
+const tokenauth = require("../../services/tokenauth");
+const viewJobs = require("./view-jobs");
+
 module.exports = {
 
 
@@ -45,10 +48,10 @@ module.exports = {
         description: 'specific printer or laser'
       },
 
-      class: {
-        type: 'boolean',
+      priority: {
+        type: 'string',
         required: false,
-        description: 'is this file class related?'
+        description: 'is this file class related, urgent, or standard?'
       }
 
     },
@@ -63,17 +66,32 @@ module.exports = {
       invalid: {
         responseType: 'badRequest',
         description: 'The provided details  are invalid.',
-        extendedDescription: 'If this request was sent from a graphical user interface, the request '+
+        extendedDescription: 'If this was sent from a graphical user interface, the request '+
         'parameters should have been validated/coerced _before_ they were sent.'
       },
   
     },
   
-    fn: async function (inputs) {
-      const userId = this.req.session.userId
-      const username = this.req.me.fullName
-      creation = await PrintJob.create({description: inputs.description, duration: inputs.duration, date: inputs.date, device: inputs.device, user: userId, username: username})
-      this.res.redirect('/job-reservations')
+    fn: async function (inputs, exits) {
+      if (this.req.header('authorization')) {
+        var token = this.req.header('authorization').split('Bearer ')[1]
+        if (!token) return exits.invalid();
+        
+        const userId = await tokenauth.getUserId(token);
+        const user = await User.findOne({id: userId});
+        sails.log("userId: " + userId);
+        if (user) {
+          //simply check that the user with the given id exists. Should have a special exit for user does not exist.
+          const username = user.firstName + ' ' + user.lastName[0] + '.';
+          await PrintJob.create({description: inputs.description, duration: inputs.duration, date: inputs.date, device: inputs.device, user: userId, username: username, priority: inputs.priority});
+          
+          var printerQueues = await sails.helpers.getVisibleJobs();
+          // return printerQueues;
+          
+          return exits.success(printerQueues); 
+        }
+      }
+      return exits.invalid();
     }
   
   };

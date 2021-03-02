@@ -4,9 +4,14 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 import 'es6-promise/auto'
+import movable from "v-movable"
+import VDragged from 'v-dragged'
+
 
 Vue.config.productionTip = false
 Vue.use(Vuex)
+Vue.use(movable)
+Vue.use(VDragged)
 axios.defaults.baseURL = 'http://localhost:1337/';
 
 const token = localStorage.getItem('token')
@@ -18,25 +23,109 @@ const store = new Vuex.Store({
   state: {
     token: localStorage.getItem('token') || null,
     user: null,
-    committees: [],
-    events: [],
-    projects: []
+    sliderValue: 1,
+    newJob: {
+      exists: false,
+      duration: -1,
+      priority: '',
+    },
+    printerQueues: [
+      {
+          device: 1,
+          jobs: [
+              {
+                  duration: 5000,
+                  date: Number(Date.now()/1000 + 1500),
+                  priority: 'Job',
+              },
+              {
+                  duration: 15000,
+                  date: Number((Date.now()/1000) + 9500),
+                  priority: 'Urgent',
+              },
+          ]
+      },
+      {
+          device: 2,
+          jobs: [
+              {
+                  duration: 2000,
+                  date: Number(Date.now()/1000 + 3000),
+                  priority: 'Private',
+              },
+              {
+                  duration: 19000,
+                  date: Number(Date.now()/1000 + 15000),
+                  priority: 'Job',
+              },
+          ]
+      },
+      {
+          device: 3,
+          jobs: [
+              {
+                  duration: 5000,
+                  date: Number(Date.now()/1000 + 6000),
+                  priority: 'Job',
+              },
+              {
+                  duration: 3000,
+                  date: Number(Date.now()/1000 + 13000),
+                  priority: 'Job',
+              },
+          ]
+      },
+      {
+        device: 4,
+        jobs: []
+    }
+    ]
   },
   getters: {
     is_authenticated (state) {
       return (state.token != null)
     },
+    username (state) {
+      if (state.user !== null) { 
+        return state.user.firstName + ' ' + state.user.lastName;  
+      }
+      return "logged out";
+    }
   },
   actions: {
+    addJobToStaging({commit}, newJob) {
+      commit('insertNewJob', newJob)
+    },
+    reserveJob({commit}, postData) {
+      axios
+        .post('/api/v1/reserve-job', postData)
+        .then(result => {
+            console.log('result of reservation: ');
+            console.log(result.data);
+            commit('setJobs', result.data);
+            //update by adding result to data array or recall get jobs..
+        })
+        .catch(error => { console.log('could not create a reservation: ' + error)});
+    },
+    queryJobs({commit}) {
+      axios.get("/job-reservations")
+            .then(res => { 
+                commit('setJobs', res.data);
+            })
+            .catch(err => console.log(err));
+    },
     queryUser({commit}) {
       const token = localStorage.getItem('token');
       if (token != null) {
         axios
           .get('/me')
           .then((response) => {
+            console.log('user set');
             commit('setUser', response.data);
+            // console.log(this.state.user.firstName);
           })
           .catch((err) => {
+            this.logout();
             console.log('error getting my details ' + err);
           });
       }
@@ -50,30 +139,6 @@ const store = new Vuex.Store({
           commit('setUser', response.data);
         })
         .catch(error => console.log(error));
-    },
-    loadCommittees({commit}) {
-      axios
-        .get("/committees")
-        .then(res => {
-          commit('setCommittees', res.data.committees)
-        })
-        .catch(error => console.log(error));
-    },
-    loadEvents({commit}) {
-      axios
-        .get("/events")
-        .then(res => { 
-          commit('setEvents', res.data.events);
-        })
-        .catch(error => {console.log(error)});
-    },
-    loadProjects({commit}) {
-      axios
-        .get("/projects", {withCredentials : true})
-        .then(res => { 
-          commit('setProjects', res.data.projects);
-        })
-        .catch(error => {console.log(error)});
     },
     login({commit}, loginCredentials) {
       axios
@@ -91,10 +156,22 @@ const store = new Vuex.Store({
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
       commit('removeUserInformation');
-      router.push('/');
+      router.push('/login');
     },
   },
   mutations: {
+    insertNewJob (state, newJob) {
+      const queues = state.printerQueues;
+
+      queues.filter((queue) => {
+        return queue.device == newJob.device;
+      })[0].jobs.push(newJob);
+
+      state.printerQueues = queues;
+    },
+    setJobs (state, queriedQueues) {
+      state.printerQueues = queriedQueues;
+    },
     setToken (state, token) {
       state.token = token;
     },
@@ -105,16 +182,11 @@ const store = new Vuex.Store({
       state.token = null;
       state.user = null;
     },
-    setCommittees (state, committees) {
-      state.committees = committees;
-    },
-    setEvents (state, events) {
-      state.events = events;
-    },
-    setProjects (state, projects) {
-      state.projects = projects;
-    },
   }
+})
+
+Vue.directive('visible', function (el, binding) {
+  el.style.display = (binding.value) ? 'block' : 'none';
 })
 
 new Vue({

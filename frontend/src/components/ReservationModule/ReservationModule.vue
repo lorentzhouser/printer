@@ -73,19 +73,32 @@ export default {
       },
       generateReceipt: function() {
         if (Object.keys(this.proposal).length == 0) { return {}; }
+
+
+        var priority = 'Job';
+        if (!this.fileObject.courseRelated) {
+          priority = 'Private';
+        }
+        else if (this.selectedOption == 'urgent') {
+          priority = 'Urgent';
+        }
+
         var receipt = {
           startTime: '',
           device: '',
           filament: this.fileObject.filament,
+          duration: this.fileObject.duration,
+          priority: priority,
+          filename: this.fileObject.filename,
         };
         
         if (this.selectedOption == 'recommended') {
-          receipt.startTime = this.proposal.recommendJobStart.startTime;
-          receipt.printer = this.proposal.recommendJobStart.printer;  
+          receipt.date = this.proposal.recommendJobStart.startTime;
+          receipt.device = this.proposal.recommendJobStart.device;  
         }
         else if (this.selectedOption == 'urgent') {
-          receipt.startTime = this.proposal.urgentJobStart.startTime;
-          receipt.printer = this.proposal.urgentJobStart.printer;  
+          receipt.date = this.proposal.urgentJobStart.startTime;
+          receipt.device = this.proposal.urgentJobStart.device;  
         }
         
         return receipt;

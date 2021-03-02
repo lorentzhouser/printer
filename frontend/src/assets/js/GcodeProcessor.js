@@ -14,6 +14,7 @@ onmessage = function (e) {
         if (e.data.message == 'processGcodes') {
            gcodeProcessor = new GcodeProcessor();
             var settings;
+            console.log("starting process gcodes");
             [gcodeLines, settings] = e.data.data;
             gcodeProcessor.processGcodes(gcodeLines, settings);
         }

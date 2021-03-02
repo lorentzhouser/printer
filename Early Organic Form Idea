@@ -1,0 +1,58 @@
+
+// humanReadablePrintTime: function() {
+//         //VALIDATES TIME PARSABLE AND UPDATES DURATION
+//         if (this.humanReadablePrintTime.length > 0) {
+//           //KEYWORDS: min, mins, minute, minutes, minutt, minutter, time, timer, hr, hrs, hours, days, day
+//           // slice away words (or commas if they exist)
+
+//           // example: 2 hr, 20 min
+//           // example: hr:2, min:20 --> don't accept this as input?
+//           // example: 2hr 20min
+//           // example: 2 hr 20 min
+//           // example: 2 hr20 min --> don't accept this input?
+          
+//           //start with delimiters
+//           //otherwise number first
+//           const timeSections = this.humanReadablePrintTime.split(',');
+          
+//           // const whiteSpaceSections = this.humanReadablePrintTime.split();
+
+//           // const trimmedWhiteWords = whiteSpaceSections.map((word)=> {
+//           //   return word.trim();
+//           // });
+
+//           // trimmedWhiteWords.forEach((word) => {
+//           //   console.log(word + " ")
+//           // });
+
+//           //If time sections don't contain anything interesting
+//           //const timeSections = this.fileObject.humanReadablePrintTime.split(' ');
+
+//           //reduce/destroy empty array values
+
+//           //TEMPORARILY COMMA DELIMITER
+
+//           const minWords = ["m", "min", "mins", "minute", "minutes", "minutt", "minutter"];
+//           this.minutes = parseInt(timeSections.filter((section) => {
+//             for (var i = 0; i < minWords.length; i++) {
+//               if (section.includes(minWords[i])) {
+//                 return true;
+//               }
+//             }
+//           }));
+
+//           const hourWords = ["h", "hr", "hrs", "hour", "hours", "t", "time", "timer"];
+//           //CHECK THAT the word isn't "HASOIAHFSA" and still valid..
+//           this.hours = parseInt(timeSections.filter((section) => {
+//             for (var i = 0; i < hourWords.length; i++) {
+//               if (section.includes(hourWords[i])) {
+//                 return true;
+//               }
+//             }
+//           }));
+//           this.continueDisabled = true;
+//           this.duration = this.calculatedDuration();
+//           console.log("watch your words duration: " + this.duration);
+//         }
+
+//       }

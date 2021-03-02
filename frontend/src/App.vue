@@ -1,22 +1,21 @@
 <template>
   <div id="app" @drop.prevent="dropped" @dragover.prevent>
     <link href="https://fonts.googleapis.com/css?family=PT+Serif:700&display=swap" rel="stylesheet">
-    <NavBar/>
-    <ReservationModule v-bind:visibilty="notifVisible" v-bind:file="file" v-on:toggleVisibility="toggleNotificationVisibility"/>
+    
+    <ReservationModal v-visible="notifVisible" v-bind:file="file" v-on:toggleVisibility="toggleNotificationVisibility"/>
+    
     <router-view/>
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'
-import ReservationModule from './components/ReservationModule/ReservationModule.vue'
+import ReservationModal from './components/NewReservationModule/ReservationModal.vue'
 import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
-    NavBar,
-    ReservationModule,
+    ReservationModal,
   },
   data: function() {
     return {
@@ -25,6 +24,7 @@ export default {
     }
   },
   created: function() {
+
     if (this.user == null) {
       this.$store.dispatch('queryUser');
     }
@@ -59,6 +59,7 @@ export default {
       }
     },
     toggleNotificationVisibility(visibility) {
+      console.log("toggled visibility: "+ visibility);
       this.notifVisible = visibility;
     }
   }
@@ -78,7 +79,6 @@ export default {
 @import "@/assets/css/components/_buttons.scss";
 @import "@/assets/css/components/_course-search.scss";
 @import "@/assets/css/components/_dropzone.scss";
-@import "@/assets/css/components/_event-component.scss";
 @import "@/assets/css/components/_face.scss";
 @import "@/assets/css/components/_filter.scss";
 @import "@/assets/css/components/_footer.scss";

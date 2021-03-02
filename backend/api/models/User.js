@@ -128,34 +128,6 @@ email status until they click the link in the confirmation email.`
       So, while this \`isSuperAdmin\` demarcation might not be the right approach forever, it's a good place to start.`
     },
 
-    // DYNAMIC ATTRIBUTES
-
-    allergies: {
-      type: 'string',
-    },
-
-    committee: {
-      model: 'committee',
-    },
-
-    projects: {
-      collection: 'project',
-      via: 'owner',
-      // dominant: true,
-    },
-
-    event_registrations: {
-      collection: 'Event',
-      via: 'registered_users',
-      dominant: true,
-    },
-
-    waiting_lists: {
-      collection: 'Event',
-      via: 'waiting_list',
-      dominant: true,
-    },
-
     passwordResetToken: {
       type: 'string',
       description: 'A unique token used to verify the user\'s identity when recovering a password.  Expires after 1 use, or after a set amount of time has elapsed.'

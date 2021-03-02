@@ -64,10 +64,10 @@ module.exports = {
         description: 'specific printer or laser'
       },
 
-      class: {
-        type: 'boolean',
+      priority: {
+        type: 'string',
         required: false,
-        description: 'is this file class related?'
+        description: 'is this file class related, urgent, or standard?'
       }
     },
 
@@ -287,24 +287,22 @@ module.exports = {
 		var recommendedJob;
 		var urgentJob;
 
-		const activePrinters = [1,3,5,6];
+		const activePrinters = [1,2,3,4,5,6];
 		const printSlots = await this.getTimeSlots(reservationDuration, activePrinters);
 		const recommendedSlots = await this.getRecommendedSlots(printSlots, reservationDuration, startingWorkHour, finishingWorkHour);
 		const longprintRecommendedSlots = await this.getLongprintRecommendedSlots(printSlots, reservationDuration, startingWorkHour, finishingWorkHour);
 
 		const recommendedSlot = await this.proposeRecommendedJob(recommendedSlots);
 		const urgentSlot = await this.proposeUrgentJob(printSlots);
-		console.log('recommended printer for slot: ' + recommendedSlot.device);
-		console.log('urgent printer for slot: ' + urgentSlot.device);
-    console.log(urgentSlot.startTime);
+		// console.log('recommended printer for slot: ' + recommendedSlot.device);
+		// console.log('urgent printer for slot: ' + urgentSlot.device);
+    // console.log(urgentSlot.startTime);
 
 		recommendedJob = reservationDuration < longPrintCriteria ? recommendedSlot : longprintRecommendedSlots[0];
+    recommendedJob.duration = reservationDuration;
 		urgentJob = urgentSlot;
 
-		return { 
-			recommendJobStart : recommendedJob,
-			urgentJobStart : urgentJob,
-		};
+		return recommendedJob;
 
     },
 

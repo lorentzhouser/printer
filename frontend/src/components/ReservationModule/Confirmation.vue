@@ -2,10 +2,10 @@
     <div id="Confirmation">
         <div class="receipt">
             <div id="confirm-schedule" class="subtitle">
-                {{receipt.startTime || 'no data'}}
+                {{receipt.date || 'no data'}}
             </div>
             <div id="confirm-printer" class="caption">
-                printer {{receipt.printer}}
+                printer {{receipt.device}}
             </div>
             <div id="confirm-filament" class="caption">
                 {{receipt.filament || 'no data'}} mm
@@ -16,33 +16,46 @@
 </template>
 
 <script>
+// import axios from 'axios';
+
 export default {
     name: 'Confirmation',
     //probably passed as props
     props: ['receipt'],
     methods: {
         confirmReservation: function() {
-            this.$router.push('/job-reservations');
-            console.log('redirect after server post request');
-
-            // const postURL = '/api/v1/reserve-job';
-
+            const receipt = this.$props.receipt;
+            
             // if ((this.getDuration() == -1) || (this.getSelectedReservationValue() == -1)) {
             //     console.log("one date variable has not been initialized");
             //     return;
             // }
 
             // var formData = new FormData()
-            // formData.set('duration', this.getDuration());
-            // formData.set('date', this.getSelectedReservationValue().startTime); 
-            // formData.set('description', this.getFilename());
-            // formData.set('class', this.getClassRelatedStatus());
-            // formData.set('device', this.getSelectedReservationValue().device);
+            // formData.set('duration', receipt.duration);
+            // formData.set('date', receipt.date);
+            // formData.set('description', receipt.filename);
+            // formData.set('class', receipt.private);
+            // formData.set('startTime', receipt.startTime);
+            // formData.set('device', receipt.device);
 
             // //must address cross-site post issue (for refresh of site)?
             // let request = new XMLHttpRequest();
             // request.open("POST", postURL);
             // request.send(formData);
+
+            // priority should be enum selectable
+
+            const postData = {
+                'duration': receipt.duration,
+                'date': receipt.date,
+                'description': receipt.filename,
+                'priority': receipt.priority,
+                'device': receipt.device,
+                'filament': receipt.filament,
+            }
+            console.log(postData);
+            this.$store.dispatch('reserveJob', postData);
         }
     }
 }

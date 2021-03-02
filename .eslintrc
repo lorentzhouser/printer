@@ -84,7 +84,10 @@
     "quotes":                       ["warn", "single", {"avoidEscape":false, "allowTemplateLiterals":true}],
     "semi":                         ["warn", "always"],
     "semi-spacing":                 ["warn", {"before":false, "after":true}],
-    "semi-style":                   ["warn", "last"]
+    "semi-style":                   ["warn", "last"],
+    "vue/no-unused-vars": ["error", {
+      "ignorePattern": "^_"
+    }]
   }
 
 }

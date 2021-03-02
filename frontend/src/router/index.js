@@ -1,109 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import JobReservation from '../views/JobReservations.vue'
 
 Vue.use(VueRouter)
 
   const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
-  },
-  //STUDENT
-  {
-    path: '/student/tips',
-    name: 'Tips',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/tips/Tips.vue')
-  },
-  {
-    path: '/student/new-tip',
-    name: 'NewTip',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/tips/New-Tip.vue')
-  },
-  // {
-    //NEEDS MAJOR RENOVATION  
-    // path: '/student/courses',
-    // name: 'Courses',
-    // component: () => import(/* webpackChunkName: "about" */ '../views/student/Courses.vue')
-  // },
-  {
-    path: '/student/books',
-    name: 'BookSales',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/BookSales.vue')
-  },
-  {
-    path: '/student/jobs',
-    name: 'Jobs',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/Jobs.vue')
-  },
-  {
-    path: '/student/new-student',
-    name: 'NewStudent',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/NewStudent.vue')
-  },
-  {
-    path: '/student/study-abroad',
-    name: 'StudyAbroad',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/StudyAbroad.vue')
-  },
-  {
-    path: '/student/class-trip',
-    name: 'ClassTrip',
-    component: () => import(/* webpackChunkName: "about" */ '../views/student/ClassTrip.vue')
-  },
-
-  //LEONARDO
-  {
-    path: '/leonardo/about',
-    name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/About.vue')
-  },
-  {
-    path: '/leonardo/thesign',
-    name: 'TheSign',
-    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/TheSign.vue')
-  },
-  {
-    path: '/leonardo/committees',
-    name: 'Committees',
-    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/committee/Committees.vue')
-  },
-  {
-    path: '/leonardo/committees/:committee',
-    name: 'CommitteeDetail',
-    component: () => import(/* webpackChunkName: "about" */ '../views/leonardo/committee/CommitteeDetail.vue')
-  },
-  //PROJECTS
-  {
-    path: '/prosjekter',
-    name: 'Projects',
-    component: () => import(/* webpackChunkName: "about" */ '../views/project/Projects.vue')
-  },
-  {
-    path: '/prosjekter/create',
-    name: 'CreateProject',
-    component: () => import(/* webpackChunkName: "about" */ '../views/project/CreateProject.vue')
-  },
-  //EVENTS
-  {
-    path: '/arrangementer',
-    name: 'Events',
-    component: () => import(/* webpackChunkName: "about" */ '../views/event/Events.vue')
-  },
-  {
-    path: '/arrangementer/:title',
-    name: 'EventDetail',
-    component: () => import(/* webpackChunkName: "about" */ '../views/event/EventDetail.vue')
-  },
-  //PRINT
-  {
-    path: '/job-reservations',
-    name: 'JobReservations',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/JobReservations.vue')
+    name: 'job-reservations',
+    component: JobReservation
   },
   //USER
   {
