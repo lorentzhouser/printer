@@ -68,6 +68,7 @@ export default {
     },
     methods: {
     convertPositionToDate: function(left) {
+        console.log('left: ' + left);
         const hours = left/50;
         const secondsFromLeft = hours*3600;
 
@@ -83,15 +84,6 @@ export default {
         console.log("open reservation modally");
         this.$emit('toggleVisibility', true);
       },
-    //   handleDrag({ target, transform }) {
-    //     console.log('onDrag left, top', transform);
-    //     this.lastDragged = target;
-    //     target.style.transform = transform;
-    //   },
-    //   endDrag() {
-    //     // const target = this.lastDragged;
-    //     // console.log('drog ended');
-    //   },
       onDragged({ el, deltaX, deltaY, _clientX, _clientY, _offsetX, _offsetY, first, last }) {
         // QUIT IF NOT A NEW JOB PROPOSAL
         var shouldContinue = false;
@@ -108,8 +100,8 @@ export default {
         var t = +window.getComputedStyle(el)['top'].slice(0, -2) || 0;
 
         if (first) {
-          this.startTop = el.style.top;
-          this.printerQueues.forEach(queue => {  
+            this.startTop = el.style.top;
+            this.printerQueues.forEach(queue => {  
                 queue.jobs.forEach(job => {
                     if (job.priority == "New") {
                         this.job = job;
@@ -117,87 +109,84 @@ export default {
                     }
                 });
             });
-        //   console.log("top start: " + window.getComputedStyle(el).top);
-          
-          el.style.zIndex = "500";
-          return
+            console.log('start date: ' + this.job.date);
+            
+            el.style.zIndex = "500";
+            return
         }
         if (last) { //COMPLETE DRAG
-
-            // const containerNode = el.parentNode.parentNode;
-            // const childNodes = containerNode.childNodes;
-            // console.log("children: " + childNodes);
-            // const filteredChildren = childNodes.filter(child => {
-            //     return (child.classList[0] == "Queue");
-            // });
-            // console.log("filteredChildren.length: " + filteredChildren.length);
-
-            // console.log("queue count: " + queues.length);
-        
-        // ('.Queue') document.querySelectorAll('#one');
             
-            const jobStyle = el.style;
-            // const yOffset = Number.parseFloat(el.middle);// + Number.parseFloat(window.getComputedStyle(el).height)/2;
-            // const queueHeight = parseFloat(window.getComputedStyle(el.parentNode).height);
-            // const queueMarginHeight = parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
+            var deltaYvertical = parseFloat(window.getComputedStyle(el).top);
+            //THERE IS A difference between moving one space and moving two!
 
-            // const nextThreshold = Number.parseFloat(queueHeight) + Number.parseFloat((queueMarginHeight)/2);
-            // var deltaQueueRatio = parseFloat(yOffset/nextThreshold);
-            // if (yOffset < 0) { deltaQueueRatio = parseInt(deltaQueueRatio - 1); }
-            // else { deltaQueueRatio = parseInt(deltaQueueRatio); }
+            var distanceToOvercome = parseFloat(window.getComputedStyle(el.parentNode).height)/2+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom)/2;
+            var rowChange = 0;
+            if (deltaYvertical < 0) {
+                deltaYvertical *= -1;
+                while (deltaYvertical > distanceToOvercome) {
+                    rowChange++;
+                    distanceToOvercome += parseFloat(window.getComputedStyle(el.parentNode).height)+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
+                }
+                rowChange *= -1;
+            } 
+            else {
+                while (deltaYvertical > distanceToOvercome) {
+                    rowChange++;
+                    distanceToOvercome += parseFloat(window.getComputedStyle(el.parentNode).height)+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
+                }
+            }
+            var newDevice = this.device + rowChange;
+            console.log("new device: " + newDevice);
             
-            // console.log('delta ratio: ' + deltaQueueRatio);
-            // console.log('yOffset: ' + yOffset);
-
-            // // get job from priority, get device, get new device from transformation
-            // var newJob;
-            // var updatedJobs;
-            // const currentQueue = this.printerQueues.filter(queue => {
-            //     var containsNew = false;
-            //     const filteredJobs = queue.jobs.filter(job => {
-            //         if (job.priority == "New") {
-            //             containsNew = true;
-            //             newJob = job;
-            //             return false;
-            //         }
-            //         return true;
-            //     });
-            //     if (containsNew) { updatedJobs = filteredJobs; }
-            //     return containsNew;
-            // })[0];
-            // const currentDevice = currentQueue.device;
-            // var nextDevice = currentDevice + deltaQueueRatio;
-            // console.log('current device: ' + currentDevice);
-            // console.log('next device: ' + nextDevice);
-            // if (nextDevice < 1) { nextDevice = 1; }
-            // else if (nextDevice > 3) { nextDevice = 3; } //change to dynamic printer count;
-            // // Remove job from previous queue
-            // if (nextDevice == currentDevice) {
-            //     jobStyle.top = this.startTop;
-            // }
-            // else {
-            //     this.printerQueues.forEach(queue => {
-            //     if (queue.device == currentDevice) { queue.jobs = updatedJobs; }
-            //     });
-            //     //Add job to new queue
-            //     this.printerQueues.forEach(queue => {
-            //         if (queue.device == nextDevice) { queue.jobs.push(newJob); }
-            //     });
-            // }
+            // get job from priority, get device, get new device from transformation
+            var newJob;
+            var updatedJobs;
+            this.printerQueues.forEach(queue => {
+                var containsNew = false;
+                const filteredJobs = queue.jobs.filter(job => {
+                    if (job.priority == "New") {
+                        containsNew = true;
+                        newJob = job;
+                        return false;
+                    }
+                    return true;
+                });
+                if (containsNew) { updatedJobs = filteredJobs; }
+            });
+            if (newDevice < 1) { newDevice = 1; }
+            else if (newDevice > 3) { newDevice = 3; } //change to dynamic printer count;
+            // Remove job from previous queue
+            if (newDevice == this.device) {
+                this.job.date = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
+                el.style.top = this.startTop;
+            }
+            else {
+                this.printerQueues.forEach(queue => {
+                if (queue.device == this.device) { queue.jobs = updatedJobs; }
+                });
+                //Add job to new queue
+                
+                newJob.date = this.convertPositionToDate(parseFloat(el.style.left));
+                console.log('updated date: ' + newJob.date);
+                this.printerQueues.forEach(queue => {
+                    if (queue.device == newDevice) { queue.jobs.push(newJob); }
+                });
+            }
 
             
             
             
 
             //RESET Z-Index after animation
+            const jobStyle = el.style;
             jobStyle.zIndex = "10";
             
             // console.log("Start Top: " + this.startTop);
             
             // animate with callback?
-            const newDate = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
-            this.job.date = newDate;
-            jobStyle.top = this.startTop;
+            
+            // this.job.date = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
+            
             
             return
         }
