@@ -34,51 +34,51 @@ const store = new Vuex.Store({
           device: 1,
           jobs: [
               {
-                  duration: 5000,
-                  date: Number(Date.now()/1000 + 1500),
-                  priority: 'Job',
+                  duration: 7200,
+                  date: Number(Date.now()/1000 + 9000),
+                  priority: 'New',
               },
-              {
-                  duration: 15000,
-                  date: Number((Date.now()/1000) + 9500),
-                  priority: 'Urgent',
-              },
+              // {
+              //     duration: 15000,
+              //     date: Number((Date.now()/1000) + 9500),
+              //     priority: 'Urgent',
+              // },
           ]
       },
       {
           device: 2,
           jobs: [
               {
-                  duration: 2000,
-                  date: Number(Date.now()/1000 + 3000),
+                  duration: 3600,
+                  date: Number(Date.now()/1000 + 7200),
                   priority: 'Private',
               },
-              {
-                  duration: 19000,
-                  date: Number(Date.now()/1000 + 15000),
-                  priority: 'Job',
-              },
+              // {
+              //     duration: 19000,
+              //     date: Number(Date.now()/1000 + 15000),
+              //     priority: 'Job',
+              // },
           ]
       },
       {
           device: 3,
           jobs: [
               {
-                  duration: 5000,
-                  date: Number(Date.now()/1000 + 6000),
+                  duration: 3600,
+                  date: Number(Date.now()/1000 + 14400),
                   priority: 'Job',
               },
-              {
-                  duration: 3000,
-                  date: Number(Date.now()/1000 + 13000),
-                  priority: 'Job',
-              },
+              // {
+              //     duration: 3000,
+              //     date: Number(Date.now()/1000 + 13000),
+              //     priority: 'Job',
+              // },
           ]
       },
-      {
-        device: 4,
-        jobs: []
-    }
+    //   {
+    //     device: 4,
+    //     jobs: []
+    // }
     ]
   },
   getters: {

@@ -1,9 +1,7 @@
 <template>
   <div id="app" @drop.prevent="dropped" @dragover.prevent>
     <link href="https://fonts.googleapis.com/css?family=PT+Serif:700&display=swap" rel="stylesheet">
-    
     <ReservationModal v-visible="notifVisible" v-bind:file="file" v-on:toggleVisibility="toggleNotificationVisibility"/>
-    
     <router-view/>
   </div>
 </template>

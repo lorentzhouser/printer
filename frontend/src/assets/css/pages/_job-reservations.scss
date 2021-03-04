@@ -50,7 +50,7 @@
   display: inline-block;
   background-color: #F3F2EF;
   vertical-align: middle;
-  width: 120px;
+  width: 100px;
   // width: 10%;
   color: black;
   white-space: nowrap;
@@ -111,12 +111,12 @@
   // transition-duration: 1s;
   // transition-timing-function:ease-in-out;
 
-  &:not(.Dragging) {
-    transition: top 2s;
+  // &:not(.Dragging) {
+    // transition: top 2s;
     // transition-property:transform;
     // transition-duration: 1s;
     // transition-timing-function:ease-in-out;
-  }
+  // }
 }
 
 .Job:hover {
@@ -144,6 +144,18 @@
 
 .Private {
   background-color: #3B208B;
+  overflow: hidden;
+  position: absolute;
+  margin: 0px;
+  float: left;
+  text-align: left;
+  width: 20%;
+  height: 100%;
+  color: #E5E5E5;
+}
+
+.New {
+  background-color: green;
   overflow: hidden;
   position: absolute;
   margin: 0px;
