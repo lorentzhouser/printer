@@ -21,7 +21,11 @@
 
             <div class="Queue" v-bind:key="printerQueue.device" v-for="printerQueue in computedPrinterQueues">
                 <div class="LeftColumnTitle">{{printerQueue.device}}</div>
-                <div v-dragged="onDragged" class="Job" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}"></div>
+                <div v-dragged="onDragged" class="Job" v-bind:key="job.id" v-for="job in printerQueue.jobs" v-bind:class="job.priority" v-bind:style="{ width: job.widthPercentage, left: job.left}">
+                    <div class="StartTime" v-if="job.priority == 'New'">
+                        <span>{{startTimeHumanReadable}}</span>
+                    </div>
+                </div>
                 <div class="RightColumnOpacity"></div>
             </div>
 
@@ -64,11 +68,11 @@ export default {
         startTop: -1,
         job: -1,
         device: -1,
+        startTimeHumanReadable: "",
       }
     },
     methods: {
     convertPositionToDate: function(left) {
-        console.log('left: ' + left);
         const hours = left/50;
         const secondsFromLeft = hours*3600;
 
@@ -80,11 +84,20 @@ export default {
         
         return ((startDate.getTime()/1000) + secondsFromLeft);    
     },
-      openReservationModal: function() {
+    humanReadableTime: function(left) {
+        const absoluteDateSeconds = this.convertPositionToDate(left);
+        // console.log("absolute seconds: " + absoluteDateSeconds);
+        const date = new Date(0);
+        date.setUTCSeconds(absoluteDateSeconds);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        this.startTimeHumanReadable = hours+":"+minutes;
+    },
+    openReservationModal: function() {
         console.log("open reservation modally");
-        this.$emit('toggleVisibility', true);
-      },
-      onDragged({ el, deltaX, deltaY, _clientX, _clientY, _offsetX, _offsetY, first, last }) {
+        this.$store.dispatch("showModal");
+    },
+    onDragged({ el, deltaX, deltaY, _clientX, _clientY, _offsetX, _offsetY, first, last }) {
         // QUIT IF NOT A NEW JOB PROPOSAL
         var shouldContinue = false;
         el.classList.forEach((className) => {
@@ -109,7 +122,6 @@ export default {
                     }
                 });
             });
-            console.log('start date: ' + this.job.date);
             
             el.style.zIndex = "500";
             return
@@ -121,23 +133,18 @@ export default {
 
             var distanceToOvercome = parseFloat(window.getComputedStyle(el.parentNode).height)/2+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom)/2;
             var rowChange = 0;
-            if (deltaYvertical < 0) {
-                deltaYvertical *= -1;
-                while (deltaYvertical > distanceToOvercome) {
-                    rowChange++;
-                    distanceToOvercome += parseFloat(window.getComputedStyle(el.parentNode).height)+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
-                }
-                rowChange *= -1;
-            } 
-            else {
-                while (deltaYvertical > distanceToOvercome) {
-                    rowChange++;
-                    distanceToOvercome += parseFloat(window.getComputedStyle(el.parentNode).height)+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
-                }
+            var sign = deltaYvertical < 0 ? -1 : 1;
+            deltaYvertical = Math.abs(deltaYvertical);
+            while (deltaYvertical > distanceToOvercome) {
+                rowChange++;
+                distanceToOvercome += parseFloat(window.getComputedStyle(el.parentNode).height)+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
             }
+            rowChange *= sign;
             var newDevice = this.device + rowChange;
-            console.log("new device: " + newDevice);
             
+            console.log('deltaY ' + deltaYvertical);
+            console.log('rowChange ' + rowChange);
+
             // get job from priority, get device, get new device from transformation
             var newJob;
             var updatedJobs;
@@ -154,51 +161,44 @@ export default {
                 if (containsNew) { updatedJobs = filteredJobs; }
             });
             if (newDevice < 1) { newDevice = 1; }
-            else if (newDevice > 3) { newDevice = 3; } //change to dynamic printer count;
+            else if (newDevice > (this.printerQueues.length-1)) { newDevice = (this.printerQueues.length); } //change to dynamic printer count;
             // Remove job from previous queue
+        
             if (newDevice == this.device) {
+                console.log("no change of device");
                 this.job.date = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
                 el.style.top = this.startTop;
             }
             else {
                 this.printerQueues.forEach(queue => {
-                if (queue.device == this.device) { queue.jobs = updatedJobs; }
+                    if (queue.device == this.device) { queue.jobs = updatedJobs; }
                 });
                 //Add job to new queue
                 
                 newJob.date = this.convertPositionToDate(parseFloat(el.style.left));
-                console.log('updated date: ' + newJob.date);
                 this.printerQueues.forEach(queue => {
                     if (queue.device == newDevice) { queue.jobs.push(newJob); }
                 });
             }
 
-            
-            
-            
-
             //RESET Z-Index after animation
             const jobStyle = el.style;
             jobStyle.zIndex = "10";
             
-            // console.log("Start Top: " + this.startTop);
+            this.startTimeHumanReadable = '';
             
-            // animate with callback?
-            
-            // this.job.date = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
-            
-            
-            return
+            return;
         }
         // el.style.left = l + deltaX + 'px';
         //Update date
         
         el.style.left = l + deltaX + 'px';
         el.style.top = t + deltaY + 'px';
+        this.humanReadableTime(parseFloat(el.style.left));
       }
     },
     computed: {
-        ...mapState(['sliderValue', 'printerQueues', 'newJob']),
+        ...mapState(['sliderValue', 'printerQueues', 'newJob', 'modalVisibility']),
         ...mapGetters(['username']),
         computedPrinterQueues: function() {
             const computedPrinterQueue = this.printerQueues;
@@ -324,7 +324,7 @@ export default {
     },
     created() {
         //deal with cors
-        // this.$store.dispatch('queryJobs');
+        this.$store.dispatch('queryJobs');
     }
 }    
 </script>

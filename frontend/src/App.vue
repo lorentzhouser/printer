@@ -1,7 +1,7 @@
 <template>
   <div id="app" @drop.prevent="dropped" @dragover.prevent>
     <link href="https://fonts.googleapis.com/css?family=PT+Serif:700&display=swap" rel="stylesheet">
-    <ReservationModal v-visible="notifVisible" v-bind:file="file" v-on:toggleVisibility="toggleNotificationVisibility"/>
+    <ReservationModal v-visible="this.modalVisibility" v-bind:file="file"/>
     <router-view/>
   </div>
 </template>
@@ -9,6 +9,7 @@
 <script>
 import ReservationModal from './components/NewReservationModule/ReservationModal.vue'
 import axios from 'axios'
+import { mapState } from 'vuex'
 
 export default {
   name: 'App',
@@ -17,9 +18,12 @@ export default {
   },
   data: function() {
     return {
-      notifVisible: false,
+      // notifVisible: false,
       file: '',
     }
+  },
+  computed: {
+    ...mapState(['modalVisibility']),
   },
   created: function() {
 
@@ -51,15 +55,15 @@ export default {
         console.log('alert of two many files added');
       }
       else {
-        this.toggleNotificationVisibility(true);
+        this.$store.dispatch('showModal');
         this.file = droppedFiles[0];
         
       }
     },
-    toggleNotificationVisibility(visibility) {
-      console.log("toggled visibility: "+ visibility);
-      this.notifVisible = visibility;
-    }
+    // toggleNotificationVisibility(visibility) {
+    //   console.log("toggled visibility: "+ visibility);
+    //   this.notifVisible = visibility;
+    // }
   }
 }
 </script>

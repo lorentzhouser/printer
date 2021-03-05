@@ -43,15 +43,10 @@
             </div>
                 
           </div>
-
           
           <div class="ModalRow">
             <button class="button fluid" :disabled="duration==-1" @click="proceedToPlacement"><span>Continue</span></button>
           </div>
-          <div class="ModalRow">
-            <button class="button fluid secondary" :disabled="duration==-1" @click="recommendTimeSlot"><span>Suggest Print Date</span></button>
-          </div>
-
         </div>
 
       </div>
@@ -116,16 +111,15 @@ export default {
         5. verify completion upon drag-finished || verify completion on clicking 'reserve' button!
         */
 
-        this.$emit('toggleVisibility', false);
         this.recommendTimeSlot((result) => {
           const device = result.device;
           const startTime = result.startTime;
           const duration = result.duration;
+          result.priority = "New";
           console.log('device: ' + device);
           console.log("startTime: " + startTime);
           console.log("duration: " + duration);
 
-          this.$emit('toggleVisibility', false);
           this.$store.dispatch('addJobToStaging', result);
         });
         

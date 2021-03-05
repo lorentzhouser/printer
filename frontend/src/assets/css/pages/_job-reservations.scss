@@ -63,7 +63,6 @@
   height: 50px;
   width: 100%;
   background-color: transparent;
-  background-color: paleturquoise;
    /* border-width: 1px; */
    /* border-color: green; */
    /* border-style: solid; */
@@ -118,12 +117,34 @@
     // transition-duration: 1s;
     // transition-timing-function:ease-in-out;
   // }
+  -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+         -o-user-select: none;
+            user-select: none;
 }
 
 .Job:hover {
   border-width: thin;
   border-color: black;
   border-style: solid;
+}
+
+.StartTime {
+  // height: 100%;
+  margin-left: 6px;
+  margin-top: 15px;
+  cursor: grab;
+  -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+         -o-user-select: none;
+            user-select: none;
+  // font-style: oblique;
+  // background-color: paleturquoise;
+  // text-align: left;
 }
 
 .ScrollMargin {

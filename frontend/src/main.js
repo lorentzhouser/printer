@@ -24,6 +24,7 @@ const store = new Vuex.Store({
     token: localStorage.getItem('token') || null,
     user: null,
     sliderValue: 1,
+    modalVisibility: false,
     newJob: {
       exists: false,
       duration: -1,
@@ -36,7 +37,7 @@ const store = new Vuex.Store({
               {
                   duration: 7200,
                   date: Number(Date.now()/1000 + 9000),
-                  priority: 'New',
+                  priority: 'Urgent',
               },
               // {
               //     duration: 15000,
@@ -93,8 +94,15 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    showModal({commit}) {
+      commit('showModal');
+    },
+    hideModal({commit}) {
+      commit('hideModal');
+    },
     addJobToStaging({commit}, newJob) {
-      commit('insertNewJob', newJob)
+      commit('insertNewJob', newJob);
+      commit('hideModal');
     },
     reserveJob({commit}, postData) {
       axios
@@ -115,6 +123,7 @@ const store = new Vuex.Store({
             .catch(err => console.log(err));
     },
     queryUser({commit}) {
+      console.log('date now: ' + Number(Date.now()/1000));
       const token = localStorage.getItem('token');
       if (token != null) {
         axios
@@ -160,6 +169,12 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    showModal (state) {
+      state.modalVisibility = true;
+    },
+    hideModal (state) {
+      state.modalVisibility = false;
+    },
     insertNewJob (state, newJob) {
       const queues = state.printerQueues;
 
