@@ -106,6 +106,7 @@
   background-color: #C23546;
   color: #E5E5E5;
   border-radius: 8px;
+  // transition: transform .2s;
   // transition: left 2s;s
   // transition-property: transform;
   // transition-duration: 1s;
@@ -126,6 +127,7 @@
 }
 
 .Job:hover {
+  // transform: scale(1.02);
   border-width: thin;
   border-color: black;
   border-style: solid;

@@ -27,8 +27,13 @@ const store = new Vuex.Store({
     modalVisibility: false,
     newJob: {
       exists: false,
+      description: '',
+      file: null,
       duration: -1,
+      date: -1,
+      device: -1,
       priority: '',
+
     },
     printerQueues: [
       {
@@ -94,6 +99,9 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    updateNewJob({commit}, update) {
+      commit('updateNew', update);
+    },
     showModal({commit}) {
       commit('showModal');
     },
@@ -104,7 +112,11 @@ const store = new Vuex.Store({
       commit('insertNewJob', newJob);
       commit('hideModal');
     },
-    reserveJob({commit}, postData) {
+    reserveJob({commit}) {
+      const postData = this.newJob;
+      console.log(this.newJob.device);
+      console.log(this.newJob.date);
+      console.log(this.newJob.duration);
       axios
         .post('/api/v1/reserve-job', postData)
         .then(result => {
@@ -123,7 +135,6 @@ const store = new Vuex.Store({
             .catch(err => console.log(err));
     },
     queryUser({commit}) {
-      console.log('date now: ' + Number(Date.now()/1000));
       const token = localStorage.getItem('token');
       if (token != null) {
         axios
@@ -169,6 +180,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    updateNew (state, update) {
+      state.newJob = update;
+    },
     showModal (state) {
       state.modalVisibility = true;
     },
@@ -177,10 +191,11 @@ const store = new Vuex.Store({
     },
     insertNewJob (state, newJob) {
       const queues = state.printerQueues;
-
+      var thisNewJob = newJob;
+      thisNewJob.priority = "New"
       queues.filter((queue) => {
         return queue.device == newJob.device;
-      })[0].jobs.push(newJob);
+      })[0].jobs.push(thisNewJob);
 
       state.printerQueues = queues;
     },

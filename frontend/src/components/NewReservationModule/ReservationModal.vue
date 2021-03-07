@@ -56,6 +56,7 @@
 <script>
 import axios from 'axios'
 var gcodeProcessorWorker = new Worker('../../assets/js/GcodeProcessor.js', { type: "module" });
+import { mapState } from 'vuex'
 
 export default {
     name: 'ReservationModal',
@@ -95,10 +96,15 @@ export default {
       },
       minutes: function() {
         this.duration = this.calculateDuration();
+      },
+      modalVisibility: function() {
+        if (this.modalVisibility==true) {
+          this.$refs.hours.focus();
+        }
       }
     },
-    mounted: function() {
-      this.$refs.hours.focus();
+    computed: {
+      ...mapState(['modalVisibility'])
     },
     methods: {
       proceedToPlacement: function() {
@@ -121,6 +127,8 @@ export default {
           console.log("duration: " + duration);
 
           this.$store.dispatch('addJobToStaging', result);
+
+          //manage no result coming back or error below
         });
         
       },

@@ -3,10 +3,16 @@
         <div class="TempNav">
             <div class="PageTitle">Printer Reservation</div>
             <div class="UserInfo">
-              <button class="NewReservationBtn" @click="openReservationModal">
+              <button v-if="reservationInProcess==false" class="button small NewReservationBtn" @click="openReservationModal">
                 <span>+</span>
               </button>
-              {{username}}
+              <button v-if="reservationInProcess==true" class="button small ConfirmReservationBtn" @click="confirmReservation">
+                <span>Confirm</span>
+              </button>
+              <button v-if="reservationInProcess==true" class="button small ConfirmReservationBtn" @click="cancelReservation">
+                <span>Cancel</span>
+              </button>
+              <!-- {{username}} -->
             </div>
         </div>
         
@@ -73,7 +79,7 @@ export default {
     },
     methods: {
     convertPositionToDate: function(left) {
-        const hours = left/50;
+        const hours = left/100;
         const secondsFromLeft = hours*3600;
 
         const startDate = new Date(0);
@@ -89,13 +95,25 @@ export default {
         // console.log("absolute seconds: " + absoluteDateSeconds);
         const date = new Date(0);
         date.setUTCSeconds(absoluteDateSeconds);
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        if (hours < 10) {
+            hours = '0' + hours;
+        }
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
         this.startTimeHumanReadable = hours+":"+minutes;
     },
     openReservationModal: function() {
-        console.log("open reservation modally");
         this.$store.dispatch("showModal");
+    },
+    confirmReservation: function() {
+        this.$store.dispatch("reserveJob");
+        console.log("confirm");
+    },
+    cancelReservation: function() {
+        this.$store.dispatch("queryJobs");
     },
     onDragged({ el, deltaX, deltaY, _clientX, _clientY, _offsetX, _offsetY, first, last }) {
         // QUIT IF NOT A NEW JOB PROPOSAL
@@ -167,6 +185,8 @@ export default {
             if (newDevice == this.device) {
                 console.log("no change of device");
                 this.job.date = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
+                this.job.device = this.device;
+                this.$store.dispatch("updateNewJob", this.job);
                 el.style.top = this.startTop;
             }
             else {
@@ -176,6 +196,8 @@ export default {
                 //Add job to new queue
                 
                 newJob.date = this.convertPositionToDate(parseFloat(el.style.left));
+                newJob.device = this.device;
+                this.$store.dispatch("updateNewJob", newJob);
                 this.printerQueues.forEach(queue => {
                     if (queue.device == newDevice) { queue.jobs.push(newJob); }
                 });
@@ -183,7 +205,7 @@ export default {
 
             //RESET Z-Index after animation
             const jobStyle = el.style;
-            jobStyle.zIndex = "10";
+            jobStyle.zIndex = "0";
             
             this.startTimeHumanReadable = '';
             
@@ -229,7 +251,7 @@ export default {
                     const deltaTimeInHours = deltaTime/3600; //3600 seconds in an hour
                     
                     // const deltaTimeInHoursInPixels = deltaTimeInHours * 50px/hour
-                    const deltaTimeInHoursInPixels = (deltaTimeInHours * 50) + 'px';
+                    const deltaTimeInHoursInPixels = (deltaTimeInHours * 100) + 'px';
                     job.left = deltaTimeInHoursInPixels;
 
                     // const distanceFromLocalHour = (deltaTimeInHours*10)/(Number(this.sliderValue));
@@ -318,8 +340,17 @@ export default {
                     }
                 });
                 //remove first time for clarity (temporarily for testing)
-                timelineObject[0] = {};
+                // timelineObject[0] = {};
                 return timelineObject;
+            },
+            reservationInProcess: function() {
+                var inProcess = false;
+                this.printerQueues.forEach((queue) => {
+                    queue.jobs.forEach((job) => {
+                        if (job.priority == "New") { inProcess = true; }
+                    });
+                });
+                return inProcess;
             }
     },
     created() {
