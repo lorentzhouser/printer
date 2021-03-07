@@ -72,8 +72,6 @@ export default {
     data: function() {
       return {
         startTop: -1,
-        job: -1,
-        device: -1,
         startTimeHumanReadable: "",
       }
     },
@@ -109,7 +107,8 @@ export default {
         this.$store.dispatch("showModal");
     },
     confirmReservation: function() {
-        this.$store.dispatch("reserveJob");
+        console.log("confirm reservation  new date: " + this.newJob.date);
+        this.$store.dispatch("reserveJob", this.newJob);
         console.log("confirm");
     },
     cancelReservation: function() {
@@ -136,7 +135,7 @@ export default {
                 queue.jobs.forEach(job => {
                     if (job.priority == "New") {
                         this.job = job;
-                        this.device = queue.device;
+                        // this.device = queue.device;
                     }
                 });
             });
@@ -158,50 +157,51 @@ export default {
                 distanceToOvercome += parseFloat(window.getComputedStyle(el.parentNode).height)+ parseFloat(window.getComputedStyle(el.parentNode).marginBottom);
             }
             rowChange *= sign;
-            var newDevice = this.device + rowChange;
-            
-            console.log('deltaY ' + deltaYvertical);
-            console.log('rowChange ' + rowChange);
+            const lastDevice = this.newJob.device;
+            var newDevice = lastDevice + rowChange;
+
+            // console.log('deltaY ' + deltaYvertical);
+            // console.log('rowChange ' + rowChange);
 
             // get job from priority, get device, get new device from transformation
-            var newJob;
-            var updatedJobs;
-            this.printerQueues.forEach(queue => {
-                var containsNew = false;
-                const filteredJobs = queue.jobs.filter(job => {
-                    if (job.priority == "New") {
-                        containsNew = true;
-                        newJob = job;
-                        return false;
-                    }
-                    return true;
-                });
-                if (containsNew) { updatedJobs = filteredJobs; }
-            });
-            if (newDevice < 1) { newDevice = 1; }
-            else if (newDevice > (this.printerQueues.length-1)) { newDevice = (this.printerQueues.length); } //change to dynamic printer count;
-            // Remove job from previous queue
-        
-            if (newDevice == this.device) {
-                console.log("no change of device");
-                this.job.date = this.convertPositionToDate(parseFloat(l) + parseFloat(deltaX));
-                this.job.device = this.device;
-                this.$store.dispatch("updateNewJob", this.job);
-                el.style.top = this.startTop;
+            
+            var updatedJob = this.newJob;
+            updatedJob.device = newDevice;
+            updatedJob.date = this.convertPositionToDate(parseFloat(el.style.left));
+            
+            if (lastDevice == newDevice) {
+                console.log("no queue change");
             }
             else {
-                this.printerQueues.forEach(queue => {
-                    if (queue.device == this.device) { queue.jobs = updatedJobs; }
+                var updatedQueues = this.printerQueues;
+                var remainingJobs;
+
+                //get jobs regular jobs
+                this.printerQueues.forEach((queue) => {
+                    if (queue.device == lastDevice) {
+                        remainingJobs = queue.jobs.filter((job) => {
+                            return (job.priority != "New");
+                        });
+                    }
                 });
-                //Add job to new queue
-                
-                newJob.date = this.convertPositionToDate(parseFloat(el.style.left));
-                newJob.device = this.device;
-                this.$store.dispatch("updateNewJob", newJob);
-                this.printerQueues.forEach(queue => {
-                    if (queue.device == newDevice) { queue.jobs.push(newJob); }
+
+                console.log("remaining job count: " + remainingJobs.length);
+
+                //update previous and new queue
+                updatedQueues.forEach((queue) => {
+                    if (queue.device == lastDevice) {
+                        queue.jobs = remainingJobs;
+                    }
+                    if (queue.device == newDevice) {
+                        queue.jobs.push(this.newJob);
+                    }
                 });
+                // this.printerQueues = updatedQueues;
+                this.$store.dispatch("updateQueues", updatedQueues);
             }
+
+
+            this.$store.dispatch("updateNewJob", updatedJob.date);
 
             //RESET Z-Index after animation
             const jobStyle = el.style;
@@ -217,7 +217,7 @@ export default {
         el.style.left = l + deltaX + 'px';
         el.style.top = t + deltaY + 'px';
         this.humanReadableTime(parseFloat(el.style.left));
-      }
+        }
     },
     computed: {
         ...mapState(['sliderValue', 'printerQueues', 'newJob', 'modalVisibility']),

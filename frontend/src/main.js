@@ -99,8 +99,11 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    updateQueues({commit}, queues) {
+      commit('updateQueues', queues);
+    }, 
     updateNewJob({commit}, update) {
-      commit('updateNew', update);
+      commit('updateNewDate', update);
     },
     showModal({commit}) {
       commit('showModal');
@@ -112,11 +115,16 @@ const store = new Vuex.Store({
       commit('insertNewJob', newJob);
       commit('hideModal');
     },
-    reserveJob({commit}) {
-      const postData = this.newJob;
-      console.log(this.newJob.device);
-      console.log(this.newJob.date);
-      console.log(this.newJob.duration);
+    reserveJob({commit}, newJob) {
+      const postData = {
+        'device' : newJob.device,
+        'date' : newJob.date,
+        'duration' : newJob.duration,
+      };
+      console.log("post data:");
+      console.log(postData.date);
+      console.log(postData.device);
+      console.log(postData.duration);
       axios
         .post('/api/v1/reserve-job', postData)
         .then(result => {
@@ -180,8 +188,12 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
-    updateNew (state, update) {
-      state.newJob = update;
+    updateQueues (state, updated) {
+      state.printerQueues = updated;
+    },
+    updateNewDate (state, updatedDate) {
+      console.log("updatedDate: " + updatedDate);
+      state.newJob.date = updatedDate;
     },
     showModal (state) {
       state.modalVisibility = true;
@@ -189,15 +201,25 @@ const store = new Vuex.Store({
     hideModal (state) {
       state.modalVisibility = false;
     },
-    insertNewJob (state, newJob) {
+    insertNewJob (state, createdJob) {
       const queues = state.printerQueues;
-      var thisNewJob = newJob;
-      thisNewJob.priority = "New"
-      queues.filter((queue) => {
-        return queue.device == newJob.device;
-      })[0].jobs.push(thisNewJob);
+      var appendedJob = createdJob;
+      appendedJob.priority = "New"
+      appendedJob.date = createdJob.startTime;
+      appendedJob.device = createdJob.device;
+      appendedJob.duration = createdJob.duration;
 
-      state.printerQueues = queues;
+      queues.filter((queue) => {
+        return (queue.device == createdJob.device);
+      })[0].jobs.push(appendedJob);
+
+      state.newJob.device = createdJob.device;
+      state.newJob.date = createdJob.startTime;
+      state.newJob.duration = createdJob.duration;
+      state.newJob.priority = createdJob.priority;
+      //more fields
+      // state.printerQueues = queues;
+      
     },
     setJobs (state, queriedQueues) {
       state.printerQueues = queriedQueues;
