@@ -147,10 +147,16 @@
             user-select: none;
 }
 
+.SelectedJob {
+  border-width: medium;
+  border-color: lightgrey;
+  border-style: solid;
+}
+
 .Job:hover {
   // transform: scale(1.02);
-  border-width: thin;
-  border-color: black;
+  border-width: medium;
+  border-color: lightgrey;
   border-style: solid;
 }
 

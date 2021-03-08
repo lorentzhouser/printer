@@ -65,9 +65,22 @@ export default {
     },
     methods: {
         selectJob: function(job) {
-            // if (job.user == this.userId) {
+            if (this.reservationInProcess) { return; }
+            if (this.selectedJob.id == job.id) {
+                const newPriorities = this.selectedJob.priority.split(" ").filter((priority) => {
+                    return priority != "SelectedJob";
+                });
+                var newPrioritiesString = "";
+                newPriorities.forEach((priority) => {
+                    newPrioritiesString += priority + " ";
+                });
+                this.selectedJob.priority = newPrioritiesString;
+                this.selectedJob = -1;
+            }
+            else {
                 this.selectedJob = job;
-            // }
+                this.selectedJob.priority = this.selectedJob.priority + " SelectedJob";
+            }
         },
         convertPositionToDate: function(left) {
             const hours = left/100;
@@ -223,9 +236,6 @@ export default {
     computed: {
         ...mapState(['sliderValue', 'printerQueues', 'newJob', 'modalVisibility']),
         ...mapGetters(['username', 'is_authenticated', 'userId']),
-        myJob : function() {
-            return  (this.selectedJob!=-1 && this.selectedJob.user==this.userId);
-        },
         cancelable: function() {
             return (this.selectedJob!=-1 && this.reservationInProcess==false && this.selectedJob.user==this.userId);
         },
@@ -261,12 +271,11 @@ export default {
                     // const deltaTimeInHoursInPixels = deltaTimeInHours * 50px/hour
                     const deltaTimeInHoursInPixels = (deltaTimeInHours * 100) + 'px';
                     job.left = deltaTimeInHoursInPixels;
-
+                    
                     //make special color for personal
                     if (job.user == this.userId) {
                         job.priority = "Personal";
                     }
-
                 });
             });
             return computedPrinterQueue;

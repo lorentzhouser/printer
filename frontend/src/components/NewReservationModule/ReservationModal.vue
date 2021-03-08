@@ -47,6 +47,10 @@
           <div class="ModalRow">
             <button class="button fluid" :disabled="duration==-1" @click="proceedToPlacement"><span>Continue</span></button>
           </div>
+          <div class="ModalRow">
+            <button class="button secondary fluid" @click="hide"><span>Cancel</span></button>
+          </div>
+          
         </div>
 
       </div>
@@ -141,7 +145,7 @@ export default {
         });
       },
       hide: function() {
-        this.$emit('toggleVisibility', false);
+        this.$store.dispatch('hideModal');
         this.resetData();
       },
       resetData: function() { 
