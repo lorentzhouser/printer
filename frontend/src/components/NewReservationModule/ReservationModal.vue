@@ -36,13 +36,13 @@
             </div>
           </div>
           
-          <div class="ModalRow">
+          <!-- <div class="ModalRow">
             <div class="ModalColumn subtitle1">Course Related</div>
             <div class="ModalColumn">
               <input type="checkbox" class="checked" id="is_course_related" v-model="courseRelated">
             </div>
                 
-          </div>
+          </div> -->
           
           <div class="ModalRow">
             <button class="button fluid" :disabled="duration==-1" @click="proceedToPlacement"><span>Continue</span></button>

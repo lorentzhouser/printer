@@ -96,6 +96,9 @@ const store = new Vuex.Store({
         return state.user.firstName + ' ' + state.user.lastName;  
       }
       return "logged out";
+    },
+    userId (state) {
+      return (state.user !== null) ? state.user.id : -1;
     }
   },
   actions: {
@@ -137,10 +140,14 @@ const store = new Vuex.Store({
     },
     queryJobs({commit}) {
       axios.get("/job-reservations")
-            .then(res => { 
-                commit('setJobs', res.data);
-            })
-            .catch(err => console.log(err));
+        .then(res => { 
+            commit('setJobs', res.data);
+        })
+        .catch(err => {
+          if (err.response) {
+            console.log(err.response);
+          }
+        });
     },
     queryUser({commit}) {
       const token = localStorage.getItem('token');
@@ -181,6 +188,7 @@ const store = new Vuex.Store({
         .catch((error) => console.log(error));
     },
     logout({commit}) {
+      console.log("logout in main.js");
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
       commit('removeUserInformation');

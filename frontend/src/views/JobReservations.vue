@@ -1,18 +1,23 @@
 <template>
     <div>
         <div class="TempNav">
-            <div class="PageTitle">Printer Reservation</div>
+            <div class="PageTitle h1">Printer Reservation</div>
             <div class="UserInfo">
-              <button v-if="reservationInProcess==false" class="button small NewReservationBtn" @click="openReservationModal">
-                <span>+</span>
-              </button>
-              <button v-if="reservationInProcess==true" class="button small ConfirmReservationBtn" @click="confirmReservation">
-                <span>Confirm</span>
-              </button>
-              <button v-if="reservationInProcess==true" class="button small ConfirmReservationBtn" @click="cancelReservation">
-                <span>Cancel</span>
-              </button>
-              <!-- {{username}} -->
+                <button v-if="reservationInProcess==false" class="button small NavButton"><span>Printer Error</span></button>
+                <button v-if="reservationInProcess==false" class="button small NavButton"><span>Contact Author</span></button>
+                <button v-if="reservationInProcess==false" class="button small NavButton"><span>Request Slot</span></button>
+                <button v-if="reservationInProcess==false" class="button small NavButton"><span>Cancel Reservation</span></button>
+
+                <button v-if="reservationInProcess==false" class="button small NavButton" @click="openReservationModal">
+                    <span>+</span>
+                </button>
+                <button v-if="reservationInProcess==true" class="button small NavButton" @click="confirmReservation">
+                    <span>Confirm</span>
+                </button>
+                <button v-if="reservationInProcess==true" class="button small NavButton" @click="cancelReservation">
+                    <span>Cancel</span>
+                </button>
+                <!-- {{username}} -->
             </div>
         </div>
         
@@ -40,24 +45,6 @@
 
         <div class="SlideContainer">
             <input type="range" class="Slider" min="1" max="6" step="1" v-model="sliderValue">
-        </div>
-
-        <div class="Legend">
-            <div>
-                <div class="Key" style="background-color: #F0AE1A;"></div>
-                <div class="LegendText">Urgent</div>
-            </div>
-            <div>
-                <div class="Key" style="background-color: #3B208B;"></div>
-                <div class="LegendText">Private</div>
-            </div>
-        </div>
-
-        <div class="Actions">
-            <button class="GantAction">Printer Error</button>
-            <button class="GantAction">Contact Author</button>
-            <button class="GantAction">Request Slot</button>
-            <button class="GantAction">Other Actions?</button>
         </div>
     </div>
 </template>
@@ -159,6 +146,12 @@ export default {
             rowChange *= sign;
             const lastDevice = this.newJob.device;
             var newDevice = lastDevice + rowChange;
+            if (newDevice < 1) {
+                newDevice = 1;
+            }
+            else  if (newDevice > this.printerQueues.length) {
+                newDevice = this.printerQueues.length;
+            }
 
             // console.log('deltaY ' + deltaYvertical);
             // console.log('rowChange ' + rowChange);
@@ -171,34 +164,35 @@ export default {
             
             if (lastDevice == newDevice) {
                 console.log("no queue change");
+                el.style.top = this.startTop;
             }
-            else {
-                var updatedQueues = this.printerQueues;
-                var remainingJobs;
+        // else {
+            var updatedQueues = this.printerQueues;
+            var remainingJobs;
 
-                //get jobs regular jobs
-                this.printerQueues.forEach((queue) => {
-                    if (queue.device == lastDevice) {
-                        remainingJobs = queue.jobs.filter((job) => {
-                            return (job.priority != "New");
-                        });
-                    }
-                });
+            //get jobs regular jobs
+            this.printerQueues.forEach((queue) => {
+                if (queue.device == lastDevice) {
+                    remainingJobs = queue.jobs.filter((job) => {
+                        return (job.priority != "New");
+                    });
+                }
+            });
 
-                console.log("remaining job count: " + remainingJobs.length);
+            console.log("remaining job count: " + remainingJobs.length);
 
-                //update previous and new queue
-                updatedQueues.forEach((queue) => {
-                    if (queue.device == lastDevice) {
-                        queue.jobs = remainingJobs;
-                    }
-                    if (queue.device == newDevice) {
-                        queue.jobs.push(this.newJob);
-                    }
-                });
-                // this.printerQueues = updatedQueues;
-                this.$store.dispatch("updateQueues", updatedQueues);
-            }
+            //update previous and new queue
+            updatedQueues.forEach((queue) => {
+                if (queue.device == lastDevice) {
+                    queue.jobs = remainingJobs;
+                }
+                if (queue.device == newDevice) {
+                    queue.jobs.push(this.newJob);
+                }
+            });
+            // this.printerQueues = updatedQueues;
+            this.$store.dispatch("updateQueues", updatedQueues);
+        // }
 
 
             this.$store.dispatch("updateNewJob", updatedJob.date);
@@ -221,7 +215,7 @@ export default {
     },
     computed: {
         ...mapState(['sliderValue', 'printerQueues', 'newJob', 'modalVisibility']),
-        ...mapGetters(['username']),
+        ...mapGetters(['username', 'is_authenticated', 'userId']),
         computedPrinterQueues: function() {
             const computedPrinterQueue = this.printerQueues;
             computedPrinterQueue.forEach(printerQueue => {
@@ -233,10 +227,11 @@ export default {
                     - (job.duration in seconds) 
                     - ratio is this.sliderWidth per 10% -> this.sliderValue/.10
                     Percentage = (job.duration * 10%) / (this.sliderValue * 3600)
+                    -  duration is in seconds?
+                    -  (50px/ 1hour) * job.duration * 1hour/3600seconds
                     */
                         
-                        // duration is in seconds?
-                        // (50px/ 1hour) * job.duration * 1hour/3600seconds
+                    
                     job.widthPercentage = (50 * job.duration / 3600) + 'px';
                     
                     const startDate = new Date(0);
@@ -254,16 +249,11 @@ export default {
                     const deltaTimeInHoursInPixels = (deltaTimeInHours * 100) + 'px';
                     job.left = deltaTimeInHoursInPixels;
 
-                    // const distanceFromLocalHour = (deltaTimeInHours*10)/(Number(this.sliderValue));
-                    // console.log('distanceFromLocalHour %: ' + distanceFromLocalHour);
-                    // job.left = distanceFromLocalHour+'%';
+                    //make special color for personal
+                    if (job.user == this.userId) {
+                        job.priority = "Personal";
+                    }
 
-                    //Could choose 100 px per hour 
-
-                    // const pixelDistanceFromLocalHours = (1500/deltaTimeInHours);
-
-                    // job.left = distanceFromLocalHour + '%';
-                    // job.left = pixelDistanceFromLocalHours + 'px';
                 });
             });
             return computedPrinterQueue;
@@ -288,7 +278,20 @@ export default {
                         }
                     });
                 });
-                const timelineDurationSeconds = (endDateSeconds - currentSeconds);
+
+                // add one page width of seconds at the end. inverse(50 pixels / 1 hour) * 3600 seconds / hour;
+
+                // extra width of page in seconds?
+                const pageWidthInSeconds = window.innerWidth * (3600/50);
+
+                console.log('pageWidth: '+ pageWidthInSeconds);
+
+
+
+                // const extraSeconds = 3600*12;
+
+                const timelineDurationSeconds = (endDateSeconds - currentSeconds) + pageWidthInSeconds;
+                console.log('timeline duration: ' + timelineDurationSeconds);
                 /* if timelineDurationSeconds < full page of time
                     add appropriate # hours
                 */
@@ -340,7 +343,7 @@ export default {
                     }
                 });
                 //remove first time for clarity (temporarily for testing)
-                // timelineObject[0] = {};
+                timelineObject[0] = {};
                 return timelineObject;
             },
             reservationInProcess: function() {
@@ -355,7 +358,12 @@ export default {
     },
     created() {
         //deal with cors
-        this.$store.dispatch('queryJobs');
+        if (this.is_authenticated) {
+            this.$store.dispatch('queryJobs');
+        }
+        else {
+            this.$store.dispatch('logout');
+        }
     }
 }    
 </script>
