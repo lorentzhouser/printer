@@ -6,7 +6,7 @@
                 <button v-if="selectedJob!=-1 && reservationInProcess==false" class="button small NavButton"><span>Printer Error</span></button>
                 <button v-if="selectedJob!=-1 && selectedJob.user != this.userId" class="button small NavButton"><span>Contact Author</span></button>
                 <button v-if="selectedJob!=-1 && selectedJob.user != this.userId" class="button small NavButton"><span>Request Slot</span></button>
-                <button v-if="cancelable" class="button small NavButton"><span>Cancel Reservation</span></button>
+                <button v-if="this.selectedJob!=-1 && this.reservationInProcess==false && this.selectedJob.user==this.userId" class="button small NavButton" @click="deleteJob"><span>Cancel Reservation</span></button>
 
                 <button v-if="reservationInProcess==false" class="button small NavButton" @click="openReservationModal">
                     <span>+</span>
@@ -36,6 +36,9 @@
                     <div class="StartTime" v-if="job.priority == 'New'">
                         <span>{{startTimeHumanReadable}}</span>
                     </div>
+                    <div class="StartTime" v-if="job.priority != 'New'">
+                        <span>{{job.username}}</span>
+                    </div>
                 </div>
                 <div class="RightColumnOpacity"></div>
             </div>
@@ -43,9 +46,9 @@
             <div class="ScrollMargin"></div>
         </div>
 
-        <div class="SlideContainer">
+        <!-- <div class="SlideContainer">
             <input type="range" class="Slider" min="1" max="6" step="1" v-model="sliderValue">
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -64,6 +67,11 @@ export default {
       }
     },
     methods: {
+        deleteJob: function() {
+
+            this.$store.dispatch("deleteJob", this.selectedJob.id);
+            this.selectedJob = -1;
+        },
         selectJob: function(job) {
             if (this.reservationInProcess) { return; }
             if (this.selectedJob.id == job.id) {
@@ -210,11 +218,7 @@ export default {
                         queue.jobs.push(this.newJob);
                     }
                 });
-                // this.printerQueues = updatedQueues;
                 this.$store.dispatch("updateQueues", updatedQueues);
-            // }
-
-
                 this.$store.dispatch("updateNewJob", updatedJob.date);
 
                 //RESET Z-Index after animation
@@ -236,9 +240,6 @@ export default {
     computed: {
         ...mapState(['sliderValue', 'printerQueues', 'newJob', 'modalVisibility']),
         ...mapGetters(['username', 'is_authenticated', 'userId']),
-        cancelable: function() {
-            return (this.selectedJob!=-1 && this.reservationInProcess==false && this.selectedJob.user==this.userId);
-        },
         computedPrinterQueues: function() {
             const computedPrinterQueue = this.printerQueues;
             computedPrinterQueue.forEach(printerQueue => {
@@ -306,14 +307,15 @@ export default {
                 // extra width of page in seconds?
                 const pageWidthInSeconds = window.innerWidth * (3600/50);
 
-                console.log('pageWidth: '+ pageWidthInSeconds);
+                // console.log('pageWidth: '+ pageWidthInSeconds);
 
 
 
                 // const extraSeconds = 3600*12;
 
                 const timelineDurationSeconds = (endDateSeconds - currentSeconds) + pageWidthInSeconds;
-                console.log('timeline duration: ' + timelineDurationSeconds);
+                
+                // console.log('timeline duration: ' + timelineDurationSeconds);
                 /* if timelineDurationSeconds < full page of time
                     add appropriate # hours
                 */
@@ -367,16 +369,16 @@ export default {
                 //remove first time for clarity (temporarily for testing)
                 timelineObject[0] = {};
                 return timelineObject;
-            },
-            reservationInProcess: function() {
-                var inProcess = false;
-                this.printerQueues.forEach((queue) => {
-                    queue.jobs.forEach((job) => {
-                        if (job.priority == "New") { inProcess = true; }
-                    });
+        },
+        reservationInProcess: function() {
+            var inProcess = false;
+            this.printerQueues.forEach((queue) => {
+                queue.jobs.forEach((job) => {
+                    if (job.priority == "New") { inProcess = true; }
                 });
-                return inProcess;
-            }
+            });
+            return inProcess;
+        }
     },
     created() {
         //deal with cors

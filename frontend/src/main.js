@@ -138,6 +138,16 @@ const store = new Vuex.Store({
         })
         .catch(error => { console.log('could not create a reservation: ' + error)});
     },
+    deleteJob({commit}, id) {
+      axios.delete("/api/v1/delete-job/" + id)
+        .then(res => { 
+          console.log(res.data);
+          commit("setJobs", res.data);
+        })
+        .catch(err => {
+          console.log(err.response);
+        });
+    },
     queryJobs({commit}) {
       axios.get("/job-reservations")
         .then(res => { 
@@ -216,6 +226,7 @@ const store = new Vuex.Store({
       appendedJob.date = createdJob.startTime;
       appendedJob.device = createdJob.device;
       appendedJob.duration = createdJob.duration;
+      appendedJob.username = createdJob.username;
 
       queues.filter((queue) => {
         return (queue.device == createdJob.device);

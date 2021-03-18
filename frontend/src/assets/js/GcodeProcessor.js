@@ -9,12 +9,14 @@ onmessage = function (e) {
         gcodeProcessor = new GcodeProcessor();
         postMessage({ "resultFormat": gcodeProcessor.results });
     } else if (e.data == "cleanup") {
+        console.log("cleanup!");
         gcodeProcessor = undefined;
     } else { 
         if (e.data.message == 'processGcodes') {
            gcodeProcessor = new GcodeProcessor();
             var settings;
             console.log("starting process gcodes");
+            
             [gcodeLines, settings] = e.data.data;
             gcodeProcessor.processGcodes(gcodeLines, settings);
         }

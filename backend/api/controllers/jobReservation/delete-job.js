@@ -34,7 +34,8 @@ module.exports = {
       if (record.length == 0) {
         throw({invalid: { error:'job does not exit'}})
       }
-      return record;
+      var printerQueues = await sails.helpers.getVisibleJobs();
+      return printerQueues;
     }
   
   };

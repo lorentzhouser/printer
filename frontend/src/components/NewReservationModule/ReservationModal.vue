@@ -15,13 +15,15 @@
             <div class="ModalColumn">
               <div class="ModalRow">
                 <div class="ModalColumn">
-                  <input class="modalInput timeInput" ref="hours" v-model="hours" placeholder="0" autofocus>
+                  <div v-if="estimating" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                  <input v-if="!estimating" class="modalInput timeInput" ref="hours" v-model="hours" placeholder="0">
                 </div>
                 <div class="ModalColumn timeTitle">
                   hours
                 </div>
                 <div class="ModalColumn">
-                  <input class="modalInput timeInput" ref="minutes" v-model="minutes" placeholder="0">
+                  <div v-if="estimating" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                  <input v-if="!estimating" class="modalInput timeInput" ref="minutes" v-model="minutes" placeholder="0">
                 </div>
                 <div class="ModalColumn timeTitle">
                   mins
@@ -31,7 +33,8 @@
 
               </div>
               <div class="ModalRow">
-                <button class="button small" :disabled="lines===''" @click="estimatePrintTime"><span>Estimate Time</span></button>
+                <button class="button small" :disabled="lines==='' || estimating" @click="estimatePrintTime"><span>Estimate Time</span></button>
+                <!-- <button v-if="estimating" class="button small" @click="cancelEstimate"><span>Cancel Estimate</span></button> -->
               </div>
             </div>
           </div>
@@ -41,13 +44,12 @@
             <div class="ModalColumn">
               <input type="checkbox" class="checked" id="is_course_related" v-model="courseRelated">
             </div>
-                
           </div> -->
           
           <div class="ModalRow">
             <button class="button fluid" :disabled="duration==-1" @click="proceedToPlacement"><span>Continue</span></button>
           </div>
-          <div class="ModalRow">
+          <div class="ModalRow lastFlexItem">
             <button class="button secondary fluid" @click="hide"><span>Cancel</span></button>
           </div>
           
@@ -75,7 +77,7 @@ export default {
         lines: '',
         hours: '',
         minutes: '',
-        
+        estimating: false,
       }      
     },
     watch: {
@@ -136,7 +138,17 @@ export default {
         });
         
       },
+      cancelEstimate: function() {
+        this.estimating = false;
+        gcodeProcessorWorker.terminate();
+        gcodeProcessorWorker = undefined;
+        // gcodeProcessorWorker.postMessage({
+        //     message: 'cleanup',
+        // });
+      },
       estimatePrintTime: function() {
+        //change to cancel estimation button
+        this.estimating = true;
         const settings = {"maxSpeed":[100,100,10,100],"maxPrintAcceleration":[1000,1000,100,10000],"maxTravelAcceleration":[1000,1000,100,10000],"maxJerk":[10,10,1,10],"absoluteExtrusion":false,"feedrateMultiplyer":100,"filamentDiameter":1.75,"firmwareRetractLength":2,"firmwareUnretractLength":2,"firmwareRetractSpeed":50,"firmwareUnretractSpeed":50,"firmwareRetractZhop":0,"timeScale":1.01};
         const lines = this.lines;
         gcodeProcessorWorker.postMessage({
@@ -186,7 +198,7 @@ export default {
         } else if ("result" in e.data) {
           const result = e.data.result;
           const duration = Math.floor(result.printTime);
-
+          self.estimating = false;
           self.duration = duration
           self.filament = result.filamentUsage;
 
@@ -252,5 +264,6 @@ export default {
 
 <style lang="scss" scoped>
    @import "@/assets/css/components/_reservation-modal.scss";
+   @import "@/assets/css/components/_loading-animation.scss";
 </style>
 
