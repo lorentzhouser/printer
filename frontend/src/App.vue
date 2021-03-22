@@ -92,6 +92,7 @@ export default {
 @import "@/assets/css/components/_quill.scss";
 @import "@/assets/css/components/_tables.scss";
 @import "@/assets/css/components/_url-preview.scss";
+
 </style>
 
 

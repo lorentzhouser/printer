@@ -22,7 +22,6 @@
     padding: 20px;
     padding-bottom: 0px;
     width: 370px;
-    // height: 450px;
 }
 .ModalTitle {
   margin-bottom: 30px;
@@ -37,8 +36,7 @@
 //   border-color: green;
 //   border-width: 1px;
   border-style: dashed;
-  flex-basis: 0;
-  flex-grow: 1;
+  // flex-grow: 1;
   margin-bottom: 5px;
   display: flex;
   flex-direction: row;
