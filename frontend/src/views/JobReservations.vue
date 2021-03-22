@@ -68,26 +68,31 @@ export default {
     },
     methods: {
         deleteJob: function() {
-
             this.$store.dispatch("deleteJob", this.selectedJob.id);
             this.selectedJob = -1;
         },
         selectJob: function(job) {
             if (this.reservationInProcess) { return; }
             if (this.selectedJob.id == job.id) {
-                const newPriorities = this.selectedJob.priority.split(" ").filter((priority) => {
-                    return priority != "SelectedJob";
+                this.removeSelectedCSS(this.selectedJob);
+                this.selectedJob = -1;
+            }
+            else {
+                this.removeSelectedCSS(this.selectedJob);
+                this.selectedJob = job;
+                this.selectedJob.priority = this.selectedJob.priority + " SelectedJob";
+            }
+        },
+        removeSelectedCSS : function(job) {
+            if (job != -1) {
+                const newPriorities = job.priority.split(" ").filter((priority) => {
+                return priority != "SelectedJob";
                 });
                 var newPrioritiesString = "";
                 newPriorities.forEach((priority) => {
                     newPrioritiesString += priority + " ";
                 });
-                this.selectedJob.priority = newPrioritiesString;
-                this.selectedJob = -1;
-            }
-            else {
-                this.selectedJob = job;
-                this.selectedJob.priority = this.selectedJob.priority + " SelectedJob";
+                job.priority = newPrioritiesString;
             }
         },
         convertPositionToDate: function(left) {
