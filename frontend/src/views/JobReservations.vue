@@ -1,5 +1,6 @@
 <template>
     <div>
+        <PrinterErrorModal/>
         <div class="TempNav">
             <div class="PageTitle h1">Printer Reservation</div>
             <div class="UserInfo">
@@ -55,10 +56,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import { mapState } from 'vuex';
-// import Moveable from 'vue-moveable';
+import PrinterErrorModal from '../components/PrinterErrorModal/PrinterErrorModal.vue'
  
 export default {
     name: 'JobReservations',
+    components: {
+        PrinterErrorModal,
+    },
     data: function() {
       return {
         startTop: -1,
