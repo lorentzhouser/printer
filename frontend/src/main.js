@@ -102,6 +102,23 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    //PRINTER ERRORS
+    printerError({commit}, errorMessage, job) {
+      const postData = {
+        'errorMessage' : errorMessage,
+        'job' : job,
+      };
+      axios
+        .post('/printerError', postData)
+        .then(result => {
+            //send a message to studass?
+            console.log('result of error feedback: ');
+            console.log(result.data);
+            commit('hideErrorModal');
+        })
+        .catch(error => { console.log('could not create a reservation: ' + error)});
+    },
+    //
     updateQueues({commit}, queues) {
       commit('updateQueues', queues);
     }, 

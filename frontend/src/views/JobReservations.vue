@@ -1,10 +1,10 @@
 <template>
     <div>
-        <PrinterErrorModal/>
+        <PrinterErrorModal v-visible="this.errorModal" :visibilty="this.errorModal" />
         <div class="TempNav">
             <div class="PageTitle h1">Printer Reservation</div>
             <div class="UserInfo">
-                <button v-if="selectedJob!=-1 && reservationInProcess==false" class="button small NavButton"><span>Printer Error</span></button>
+                <button v-if="selectedJob!=-1 && reservationInProcess==false" class="button small NavButton" @click="printerError"><span>Printer Error</span></button>
                 <button v-if="selectedJob!=-1 && selectedJob.user != this.userId" class="button small NavButton"><span>Contact Author</span></button>
                 <button v-if="selectedJob!=-1 && selectedJob.user != this.userId" class="button small NavButton"><span>Request Slot</span></button>
                 <button v-if="this.selectedJob!=-1 && this.reservationInProcess==false && this.selectedJob.user==this.userId" class="button small NavButton" @click="deleteJob"><span>Cancel Reservation</span></button>
@@ -68,13 +68,32 @@ export default {
         startTop: -1,
         startTimeHumanReadable: "",
         selectedJob: -1,
+        errorModal: false,
       }
     },
     methods: {
+        //BUTTON JOB FUNCTIONS
         deleteJob: function() {
             this.$store.dispatch("deleteJob", this.selectedJob.id);
             this.selectedJob = -1;
         },
+        printerError: function() {
+            console.log("printer error");
+            this.errorModal = true;
+        },
+        openReservationModal: function() {
+            this.selectedJob = -1;
+            this.$store.dispatch("showModal");
+        },
+        confirmReservation: function() {
+            console.log("confirm reservation  new date: " + this.newJob.date);
+            this.$store.dispatch("reserveJob", this.newJob);
+            console.log("confirm");
+        },
+        cancelReservation: function() {
+            this.$store.dispatch("queryJobs");
+        },
+        //END BUTTON JOB FUNCTIONS
         selectJob: function(job) {
             if (this.reservationInProcess) { return; }
             if (this.selectedJob.id == job.id) {
@@ -125,18 +144,6 @@ export default {
                 minutes = '0' + minutes;
             }
             this.startTimeHumanReadable = hours+":"+minutes;
-        },
-        openReservationModal: function() {
-            this.selectedJob = -1;
-            this.$store.dispatch("showModal");
-        },
-        confirmReservation: function() {
-            console.log("confirm reservation  new date: " + this.newJob.date);
-            this.$store.dispatch("reserveJob", this.newJob);
-            console.log("confirm");
-        },
-        cancelReservation: function() {
-            this.$store.dispatch("queryJobs");
         },
         onDragged({ el, deltaX, deltaY, _clientX, _clientY, _offsetX, _offsetY, first, last }) {
             // QUIT IF NOT A NEW JOB PROPOSAL
